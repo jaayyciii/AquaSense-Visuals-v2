@@ -1,0 +1,108 @@
+import { useEffect, useMemo, useRef } from "react";
+import { Chart, ChartConfiguration, registerables } from "chart.js";
+Chart.register(...registerables);
+import type { HistoryType } from "../home/SensorDetailPanel";
+
+// component props
+type LineGraphProps = {
+  history: HistoryType[];
+  predict: number;
+};
+
+export default function LineGraph({ history, predict }: LineGraphProps) {
+  // canvas and chart reference
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const chartRef = useRef<Chart<"line"> | null>(null);
+
+  // sets the recent data timestamps (as label) and values as data for the line graph
+  const data = useMemo(() => {
+    const labels = history.map((entry) =>
+      entry?.timestamp
+        ? entry.timestamp.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          })
+        : "null"
+    );
+    const values = history.map((entry) => entry?.data ?? 0);
+
+    // returns the complete details to be utilized by the line graph
+    // sets the predicted value as the latest data with E.+30m label
+    return {
+      labels: [...labels.reverse(), "Predicted at 30 minutes"],
+      datasets: [
+        {
+          label: "Value",
+          data: [...values.reverse(), predict],
+          backgroundColor: [
+            ...values.map((value) => (value === 0 ? "gray" : "white")),
+            "royalblue",
+          ],
+          borderColor: "royalblue",
+          borderWidth: 1,
+          pointRadius: 5,
+          segment: {
+            borderDash: (ctx: any) =>
+              ctx.p0DataIndex === history.length - 1 &&
+              ctx.p1DataIndex === history.length
+                ? [5, 5]
+                : undefined,
+          },
+        },
+      ],
+    };
+  }, [history, predict]);
+
+  // sets the chart configuration
+  useEffect(() => {
+    const config: ChartConfiguration<"line"> = {
+      type: "line",
+      data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+        elements: {
+          line: {
+            tension: 0.3,
+          },
+        },
+        scales: {
+          x: {
+            display: false,
+          },
+        },
+      },
+    };
+
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext("2d");
+      if (ctx) {
+        chartRef.current = new Chart(ctx, config);
+      }
+    }
+
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
+  }, [data]);
+
+  return (
+    <div className="d-flex flex-column bg-white shadow rounded p-4 h-100 w-100">
+      <h5 style={{ fontSize: "18px" }}>Data Trend Tracker</h5>
+      <div
+        className="d-flex justify-content-center align-items-center mt-3"
+        style={{ maxHeight: "280px", height: "100%" }}
+      >
+        <canvas ref={canvasRef} id="myChart" />
+      </div>
+    </div>
+  );
+}
