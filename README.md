@@ -1,2 +1,2 @@
 # AquaSense-Visuals-v2
-Updates: Firebase Connections are centralized at Root Panel, Separated Port Configuration, Removed Accounts Panel, Archive Panel, Refined UI, Mobile View, 
+Updates: Firebase Connections (UseEffects) are Centralized at Root Panels, Separated Port Configuration, Removed Accounts Panel, Archive Panel, Refined UI, Mobile View, 
