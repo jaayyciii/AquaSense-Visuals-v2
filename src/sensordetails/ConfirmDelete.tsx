@@ -8,11 +8,14 @@ export default function ConfirmDelete({
   name,
   setPrompt,
   disable,
+  admin,
 }: DeleteProps) {
   const navigate = useNavigate();
 
   // handles confirm delete button, this sets the display to false at firebase
   function confirmDelete() {
+    if (!admin) return;
+
     set(ref(db, `ConfigurationFiles/Display//${portIndex}`), "F")
       .then(() => {
         setPrompt(

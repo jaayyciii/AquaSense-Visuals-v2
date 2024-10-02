@@ -11,6 +11,7 @@ export default function SDPortConfiguration({
   portConfiguration,
   setPrompt,
   disable,
+  admin,
 }: SDConfigurationProps) {
   // modal reference
   const modalRef = useRef<HTMLDivElement>(null);
@@ -125,6 +126,7 @@ export default function SDPortConfiguration({
   // handles port configuration submit
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!admin) return;
 
     if (!inputVerified) return;
     try {

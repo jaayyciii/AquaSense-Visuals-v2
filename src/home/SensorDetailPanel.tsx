@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ref, onValue } from "firebase/database";
+import { ref, update, onValue } from "firebase/database";
 import { db } from "../FirebaseConfig";
 import ConfirmActuate from "../sensordetails/ConfirmActuate";
 import DeleteButton from "../sensordetails/DeleteButton";
@@ -36,7 +36,7 @@ export type ActuationTriggerType = {
 export default function SensorDetailPanel() {
   const navigate = useNavigate();
   // gets the props through outlet context
-  const { portListLoading, portList, setPrompt } =
+  const { portListLoading, portList, setPrompt, admin } =
     useOutletContext<ContextType>();
 
   // gets the index value from the URL Search
@@ -112,7 +112,7 @@ export default function SensorDetailPanel() {
     return () => unsubscribe();
   }, []);
 
-  // gets the history and renders a total of the past week
+  // gets the entire history, maximum of 3 months
   useEffect(() => {
     if (retrievingConfiguration) return;
 
@@ -170,6 +170,36 @@ export default function SensorDetailPanel() {
     return () => unsubscribe();
   }, []);
 
+  // sets the notification at firebase in the event of predicted value exceeding the threshold
+  useEffect(() => {
+    if (retrievingHistory) return;
+
+    if (
+      portConfiguration.threshold[0] <= predict &&
+      predict <= portConfiguration.threshold[1]
+    )
+      return;
+
+    try {
+      const num = Math.floor(Math.random() * 100);
+      update(ref(db, `Notifications`), {
+        [num]: {
+          port: portIndex,
+          timestamp: new Date()
+            .toLocaleString("en-US", {
+              dateStyle: "short",
+              timeStyle: "medium",
+            })
+            .replace(/\//g, "-"),
+          type: 5,
+          viewed: "F",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [predict, portConfiguration.threshold]);
+
   // gets the device actuation status
   useEffect(() => {
     isRetrievingActuation(true);
@@ -201,6 +231,7 @@ export default function SensorDetailPanel() {
         actuationTrigger={actuationTrigger}
         setPrompt={setPrompt}
         disable={portListLoading || retrievingActuation}
+        admin={admin}
       />
       {/* Sensor Details Panel */}
       <div className="d-flex flex-column flex-grow-1 pb-3 px-4 ">
@@ -212,6 +243,7 @@ export default function SensorDetailPanel() {
               name={portConfiguration.define}
               setPrompt={setPrompt}
               disable={actuationTrigger.actuate || portListLoading}
+              admin={admin}
             />
             <SDConfigurationButton
               portIndex={portIndex}
@@ -223,12 +255,14 @@ export default function SensorDetailPanel() {
                 retrievingConfiguration ||
                 portListLoading
               }
+              admin={admin}
             />
             <div className="d-none d-md-flex">
               <ActuateButton
                 actuationTrigger={actuationTrigger}
                 setPrompt={setPrompt}
                 disable={portListLoading || retrievingActuation}
+                admin={admin}
               />
             </div>
           </div>
@@ -238,6 +272,7 @@ export default function SensorDetailPanel() {
             actuationTrigger={actuationTrigger}
             setPrompt={setPrompt}
             disable={portListLoading || retrievingActuation}
+            admin={admin}
           />
         </div>
         {portListLoading || retrievingConfiguration || retrievingHistory ? (

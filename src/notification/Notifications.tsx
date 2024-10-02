@@ -6,13 +6,18 @@ import type { NotificationsType } from "../home/HomeLayout.tsx";
 // component props
 type NotificationProps = {
   notifications: NotificationsType[];
+  admin: boolean;
 };
 
-export default function Notification({ notifications }: NotificationProps) {
+export default function Notification({
+  notifications,
+  admin,
+}: NotificationProps) {
   const navigate = useNavigate();
 
   // handles delete function, which removes the notification from the firebase
   function handleDelete(key: string) {
+    if (!admin) return;
     remove(ref(db, `Notifications/${key}`)).catch((error) => {
       console.error(error);
     });
@@ -77,13 +82,15 @@ export default function Notification({ notifications }: NotificationProps) {
                       </small>
                     </div>
                     <div>
-                      <button
-                        className="btn btn-sm btn-danger me-1 py-0"
-                        data-bs-dismiss="modal"
-                        onClick={() => handleDelete(notification.key)}
-                      >
-                        Delete
-                      </button>
+                      {admin && (
+                        <button
+                          className="btn btn-sm btn-danger me-1 py-0"
+                          data-bs-dismiss="modal"
+                          onClick={() => handleDelete(notification.key)}
+                        >
+                          Delete
+                        </button>
+                      )}
                       <button
                         className="btn btn-sm btn-primary py-0"
                         data-bs-dismiss="modal"

@@ -6,6 +6,7 @@ export type DeleteProps = {
   name: string;
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
   disable: boolean;
+  admin: boolean;
 };
 
 export default function DeleteButton({
@@ -13,6 +14,7 @@ export default function DeleteButton({
   name,
   setPrompt,
   disable,
+  admin,
 }: DeleteProps) {
   return (
     <>
@@ -22,18 +24,21 @@ export default function DeleteButton({
         name={name}
         setPrompt={setPrompt}
         disable={disable}
+        admin={admin}
       />
       {/* Delete Button */}
-      <button
-        type="button"
-        className="btn btn-sm btn-outline-primary d-flex justify-content-center align-items-center px-2"
-        data-bs-toggle="modal"
-        data-bs-target="#deletePort"
-        style={{ height: "35px" }}
-        disabled={disable}
-      >
-        <i className="bi bi-trash3" style={{ fontSize: "16px" }} />
-      </button>
+      {admin && (
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-primary d-flex justify-content-center align-items-center px-2"
+          data-bs-toggle="modal"
+          data-bs-target="#deletePort"
+          style={{ height: "35px" }}
+          disabled={disable}
+        >
+          <i className="bi bi-trash3" style={{ fontSize: "16px" }} />
+        </button>
+      )}
     </>
   );
 }

@@ -16,7 +16,6 @@ export default function DataHistory({
   history,
   setPrompt,
 }: DataHistoryProps) {
-  const days = history.slice(0, 24 * 2);
   return (
     <div className="d-flex flex-column bg-white shadow rounded p-4 h-100 w-100">
       <div className="d-flex justify-content-between align-items-start mb-1">
@@ -39,8 +38,8 @@ export default function DataHistory({
             </tr>
           </thead>
           <tbody className="table-group-divider" style={{ fontSize: "14px" }}>
-            {days.length > 0 ? (
-              days.map((record) => (
+            {history.length > 0 ? (
+              history.map((record) => (
                 <tr key={record.timestamp.toISOString()}>
                   <td className="col-6">
                     {new Date(record.timestamp).toLocaleString("en-US", {

@@ -16,7 +16,7 @@ export default function LineGraph({ history, predict }: LineGraphProps) {
 
   // sets the recent data timestamps (as label) and values as data for the line graph
   const data = useMemo(() => {
-    const labels = history.map((entry) =>
+    const labels = history.slice(0, 48).map((entry) =>
       entry?.timestamp
         ? entry.timestamp.toLocaleTimeString("en-US", {
             hour: "numeric",
@@ -25,7 +25,7 @@ export default function LineGraph({ history, predict }: LineGraphProps) {
           })
         : "null"
     );
-    const values = history.map((entry) => entry?.data ?? 0);
+    const values = history.slice(0, 48).map((entry) => entry?.data ?? 0);
 
     // returns the complete details to be utilized by the line graph
     // sets the predicted value as the latest data with E.+30m label

@@ -10,7 +10,8 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth } from "./FirebaseConfig";
+import { auth, db } from "./FirebaseConfig";
+import { ref, update } from "firebase/database";
 
 // typescript data types
 export type UserCredentialsType = {
@@ -56,11 +57,21 @@ export function AuthProvider({ children }: React.PropsWithChildren<{}>) {
         if (userCredential.user) {
           return updateProfile(userCredential.user, {
             displayName: username,
-          }).then(() => {
-            return sendEmailVerification(userCredential.user).then(
-              () => userCredential
-            );
-          });
+          })
+            .then(() => {
+              try {
+                update(ref(db, `Users`), {
+                  [userCredential.user.uid]: "Guest",
+                });
+              } catch (error) {
+                console.error(error);
+              }
+            })
+            .then(() => {
+              return sendEmailVerification(userCredential.user).then(
+                () => userCredential
+              );
+            });
         }
         return userCredential;
       }

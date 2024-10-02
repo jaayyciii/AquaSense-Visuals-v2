@@ -5,9 +5,10 @@ import logo from "../assets/logo.png";
 
 type HeaderProps = {
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
+  admin: boolean;
 };
 
-export default function Header({ setPrompt }: HeaderProps) {
+export default function Header({ setPrompt, admin }: HeaderProps) {
   // holds user credentials obtained from Auth Context
   const { currentUser } = useAuth();
   // Saves the initials from display name
@@ -22,7 +23,7 @@ export default function Header({ setPrompt }: HeaderProps) {
 
   return (
     <>
-      <UpdateProfile initials={initials} setPrompt={setPrompt} />
+      <UpdateProfile initials={initials} setPrompt={setPrompt} admin={admin} />
       <div
         className="fixed-top bg-white shadow"
         style={{ height: "55px", width: "100%" }}

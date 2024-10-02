@@ -18,6 +18,7 @@ export default function DOPortConfiguration({
   portListLoading,
   portList,
   setPrompt,
+  admin,
 }: DOConfigurationProps) {
   // modal reference
   const modalRef = useRef<HTMLDivElement>(null);
@@ -148,6 +149,7 @@ export default function DOPortConfiguration({
   // handles port configuration submit
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!admin) return;
 
     if (!inputVerified) return;
     try {

@@ -6,11 +6,13 @@ import { useAuth } from "../AuthContext";
 type UpdateProfileProps = {
   initials: string;
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
+  admin: boolean;
 };
 
 export default function UpdateProfile({
   initials,
   setPrompt,
+  admin,
 }: UpdateProfileProps) {
   // holds user credentials obtained from Auth Context
   const { currentUser } = useAuth();
@@ -107,7 +109,12 @@ export default function UpdateProfile({
                   />
                 </h3>
               )}
-              <p className="mt-2 mb-0">{currentUser?.email}</p>
+              <p className="mt-2 mb-0">
+                {currentUser?.email}{" "}
+                <span className={`badge ${admin ? "bg-success" : "bg-info"}`}>
+                  {admin ? " Administator" : " Guest"}
+                </span>
+              </p>
             </div>
             <div
               className="text-muted lh-1 mt-0 mb-2"

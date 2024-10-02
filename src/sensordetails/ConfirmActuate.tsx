@@ -6,9 +6,12 @@ export default function ConfirmActuate({
   actuationTrigger,
   setPrompt,
   disable,
+  admin,
 }: ActuateProps) {
   // handles the actuate button. toggles the actuate status from true-false, vice-versa
   function confirmActuate() {
+    if (!admin) return;
+
     set(ref(db, "Actuation/actuate"), actuationTrigger.actuate ? "F" : "T")
       .then(() => {
         setPrompt(

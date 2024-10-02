@@ -39,7 +39,7 @@ export default function Numerics({
     []
   );
 
-  // gets the latest 5 time, value (as xy) values as data for extrapolation
+  // gets the latest <ExtrapolationDataPoints> (as xy) values as data for extrapolation
   useEffect(() => {
     const dataset = history.slice(0, ExtrapolationDataPoints);
     if (dataset.length < ExtrapolationDataPoints) return () => setPredict(0);

@@ -11,7 +11,7 @@ export default function LogInLayout() {
       >
         <div className="d-flex flex-column w-100 mx-2">
           {/* Desktop Header View */}
-          <div className="d-flex d-none d-sm-block">
+          <div className="d-flex align-items-center d-none d-sm-block">
             <img src={logo} alt="logo" style={{ width: "30px" }} />
             <span className="ms-3 fw-bold" style={{ fontSize: "20px" }}>
               AquaSense Visuals

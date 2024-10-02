@@ -5,11 +5,13 @@ export type ActuateProps = {
   actuationTrigger: ActuationTriggerType;
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
   disable: boolean;
+  admin: boolean;
 };
 
 export default function ActuateButton({
   actuationTrigger,
   disable,
+  admin,
 }: ActuateProps) {
   return (
     <>
@@ -23,7 +25,7 @@ export default function ActuateButton({
           data-bs-toggle="modal"
           data-bs-target="#actuate"
           style={{ height: "35px" }}
-          disabled={!actuationTrigger.control || disable}
+          disabled={!actuationTrigger.control || disable || !admin}
         >
           <i className="bi bi-moisture me-2" style={{ fontSize: "18px" }} />
           {!actuationTrigger.actuate

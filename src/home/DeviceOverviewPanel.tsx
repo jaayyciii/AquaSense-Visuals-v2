@@ -6,7 +6,7 @@ import type { ContextType } from "./HomeLayout";
 
 export default function DeviceOverviewPanel() {
   // gets the props through outlet context
-  const { portListLoading, portList, setPrompt } =
+  const { portListLoading, portList, setPrompt, admin } =
     useOutletContext<ContextType>();
 
   return (
@@ -18,6 +18,7 @@ export default function DeviceOverviewPanel() {
             portListLoading={portListLoading}
             portList={portList}
             setPrompt={setPrompt}
+            admin={admin}
           />
         </div>
         {/* Display Real-time Sensor List */}

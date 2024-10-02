@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArchiveType } from "../home/DataArchivePanel";
-//import { get, onValue, ref, set } from "firebase/database";
-//import { db } from "../FirebaseConfig";
+import { get, onValue, ref, set } from "firebase/database";
+import { db } from "../FirebaseConfig";
 
 type ExportArchiveProps = {
   exportArchive: ArchiveType | undefined;
@@ -23,48 +23,65 @@ export default function ExportArchive({
     archiveID: "",
     extension: "csv",
   });
+  //const [response, setResponse] = useState<any>();
+  const [appFlag, setAppFlag] = useState<boolean>(false);
   const [serverFlag, setServerFlag] = useState<boolean>(false);
   const [loading, isLoading] = useState<boolean>(false);
-  //const request = exportArchive?.id ?? -1;
 
+  // handles archive export button, sends request flag to the server
   async function handleExport(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setDownload({ ...download, archiveID: exportArchive?.id || "999" });
-    setPrompt(
-      `Fuck you. ${download.fileName}, ${download.archiveID}, ${download.extension}`
-    );
+    setDownload({ ...download, archiveID: exportArchive?.id || "-1" });
 
-    /*
+    if (serverFlag) {
+      setPrompt(
+        "The server is still processing another request. Please wait for a few minutes and try again."
+      );
+      return;
+    }
+
     try {
       await set(ref(db, "ExportArchive/appFlag"), "F");
-      console.log("set app false");
+      setAppFlag(false);
       if (serverFlag) return;
-      console.log("get server false");
 
-      await set(ref(db, "ExportArchive/request"), request);
-      console.log("set app request");
+      await set(ref(db, "ExportArchive/request"), download.archiveID);
       await set(ref(db, "ExportArchive/appFlag"), "T");
-      console.log("set app true");
-
-      // WORST WAITING METHOD EVER
-
-      if (serverFlag) {
-        const snapshot = await get(ref(db, "ExportArchive/response"));
-
-        if (snapshot.exists()) {
-          console.log(snapshot.val());
-        } else {
-          console.log("No data available");
-        }
-      }
-      await set(ref(db, "ExportArchive/appFlag"), "F");
+      setAppFlag(true);
     } catch (error) {
       console.error(error);
     }
-      */
   }
 
-  /*useEffect(() => {
+  // waits and processes the data retrieved from the server
+  useEffect(() => {
+    if (!appFlag) return;
+
+    if (appFlag && serverFlag) {
+      const fetchData = async () => {
+        try {
+          const snapshot = await get(ref(db, "ExportArchive/response"));
+          if (snapshot.exists()) {
+            setPrompt(`RECEIVED_DATA: ${snapshot.val()}`);
+            try {
+              await set(ref(db, "ExportArchive/appFlag"), "F");
+              setAppFlag(false);
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        } catch (error) {
+          console.error(error);
+          setPrompt(`RECEIVE_ERROR`);
+        }
+      };
+
+      fetchData();
+    }
+  }, [appFlag, serverFlag]);
+
+  // retrieves the server flag value
+  useEffect(() => {
     isLoading(true);
     const unsubscribe = onValue(
       ref(db, "ExportArchive/serverFlag/"),
@@ -82,7 +99,7 @@ export default function ExportArchive({
     );
 
     return () => unsubscribe();
-  }, []);*/
+  }, []);
 
   return (
     <div

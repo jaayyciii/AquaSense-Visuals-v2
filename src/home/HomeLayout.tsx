@@ -1,7 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, get } from "firebase/database";
 import { db } from "../FirebaseConfig";
+import { useAuth } from "../AuthContext";
 import Notifications from "../notification/Notifications";
 import Notify from "../notification/Notify";
 import NavPanel from "./NavPanel";
@@ -31,9 +32,14 @@ export type ContextType = {
   portListLoading: boolean;
   portList: PortListType[];
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
+  admin: boolean;
 };
 
 export default function HomeLayout() {
+  // holds user credentials obtained from Auth Context
+  const { currentUser } = useAuth();
+  //  role-based access control
+  const [admin, setAdmin] = useState<boolean>(false);
   // list of ports with its active and display details
   const [portList, setPortList] = useState<PortListType[]>([
     { name: "Port A", active: false, display: false },
@@ -66,6 +72,8 @@ export default function HomeLayout() {
       case 3:
         return `${portName}'s current reading has exceeded the upper threshold. Automated actuation has been triggered.`;
       case 4:
+        return `${portName}'s current reading has exceeded the lower threshold. Automated actuation has been triggered.`;
+      case 5:
         return `The predicted value of ${portName} in the next 30 minutes is expected to exceed the threshold. Would you like to initiate actuation now?`;
       default:
         return "Error: Unrecognized notification. Please ignore this message.";
@@ -149,6 +157,23 @@ export default function HomeLayout() {
     return () => unsubscribe();
   }, []);
 
+  // get user's role status for access control
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const snapshot = await get(ref(db, `Users/${currentUser?.uid}`));
+        if (snapshot.exists()) {
+          const firebaseSnapshot = snapshot.val();
+          setAdmin(firebaseSnapshot === "admin");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchRole();
+  }, [currentUser]);
+
   return (
     <>
       {/* Notifications */}
@@ -157,11 +182,11 @@ export default function HomeLayout() {
         setPrompt={setPrompt}
         prompt={prompt}
       />
-      <Notifications notifications={notifications} />
+      <Notifications notifications={notifications} admin={admin} />
 
       {/* Home Layout */}
       <NavPanel nView={nView} setPrompt={setPrompt} />
-      <Header setPrompt={setPrompt} />
+      <Header setPrompt={setPrompt} admin={admin} />
       {/* React Router Outlet */}
       <div
         className="d-flex flex-column bg-body-primary"
@@ -170,7 +195,7 @@ export default function HomeLayout() {
         <div style={{ minHeight: "55px" }} />
         <div className="d-flex flex-row flex-grow-1">
           <div className="d-none d-md-flex" style={{ minWidth: "260px" }} />
-          <Outlet context={{ portListLoading, portList, setPrompt }} />
+          <Outlet context={{ portListLoading, portList, setPrompt, admin }} />
         </div>
         <div className="d-block d-md-none" style={{ minHeight: "55px" }} />
       </div>

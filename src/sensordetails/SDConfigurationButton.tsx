@@ -8,6 +8,7 @@ export type SDConfigurationProps = {
   portConfiguration: PortConfigurationType;
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
   disable: boolean;
+  admin: boolean;
 };
 
 export default function SDConfigurationButton({
@@ -16,6 +17,7 @@ export default function SDConfigurationButton({
   portConfiguration,
   setPrompt,
   disable,
+  admin,
 }: SDConfigurationProps) {
   return (
     <>
@@ -26,17 +28,20 @@ export default function SDConfigurationButton({
         portConfiguration={portConfiguration}
         setPrompt={setPrompt}
         disable={disable}
+        admin={admin}
       />
       {/* Port Configuration Button */}
-      <button
-        className="btn btn-sm btn-outline-primary d-flex justify-content-center align-items-center px-2"
-        data-bs-toggle="modal"
-        data-bs-target="#SDPortConfiguration"
-        style={{ height: "35px" }}
-        disabled={disable}
-      >
-        <i className="bi bi-gear" style={{ fontSize: "16px" }} />
-      </button>
+      {admin && (
+        <button
+          className="btn btn-sm btn-outline-primary d-flex justify-content-center align-items-center px-2"
+          data-bs-toggle="modal"
+          data-bs-target="#SDPortConfiguration"
+          style={{ height: "35px" }}
+          disabled={disable}
+        >
+          <i className="bi bi-gear" style={{ fontSize: "16px" }} />
+        </button>
+      )}
     </>
   );
 }
