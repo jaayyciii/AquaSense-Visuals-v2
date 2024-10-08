@@ -44,3 +44,13 @@ Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+# Vercel Deployment
+
+Perform the following:
+
+- NPM Install Vercel CLI: npm install -g vercel
+- Build the application, npm run build
+- Run vercel; if restricted, Set-ExecutionPolicy RemoteSigned -Scope CurrentUser.
+- Log in to your email and verify your account
+- revert execution policy, Set-ExecutionPolicy Restricted -Scope CurrentUser
