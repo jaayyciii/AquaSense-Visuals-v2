@@ -112,7 +112,7 @@ export default function UpdateProfile({
               <p className="mt-2 mb-0">
                 {currentUser?.email}{" "}
                 <span className={`badge ${admin ? "bg-success" : "bg-info"}`}>
-                  {admin ? " Administator" : " Guest"}
+                  {admin ? " Admin" : " Guest"}
                 </span>
               </p>
             </div>

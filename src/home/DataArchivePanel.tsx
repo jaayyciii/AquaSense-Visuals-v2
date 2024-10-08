@@ -1,7 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
-import PortArchive from "../dataarchive/PortArchive";
-import ExportArchive from "../dataarchive/ExportArchive";
+import PortArchive from "../data-archive/PortArchive";
+import ExportArchive from "../data-archive/ExportArchive";
 import type { ContextType } from "./HomeLayout";
 import { onValue, ref } from "firebase/database";
 import { db } from "../FirebaseConfig";
@@ -25,7 +25,6 @@ export default function DataArchivePanel() {
     useOutletContext<ContextType>();
   const [deviceArchives, setDeviceArchives] = useState<PortArchivesType[]>([]);
   const [retrievingArchive, isRetrievingArchive] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [exportArchive, setExportArchive] = useState<ArchiveType | undefined>();
 
   useEffect(() => {
@@ -84,19 +83,7 @@ export default function DataArchivePanel() {
       <ExportArchive exportArchive={exportArchive} setPrompt={setPrompt} />
       <div className="d-flex flex-column flex-grow-1 pb-3 px-4">
         <div className="d-flex flex-wrap justify-content-between mt-4">
-          <h4>Data Archive</h4>
-          <div className="input-group w-50 w-sm-100">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <span className="input-group-text text-white bg-primary">
-              <i className="bi bi-search" />
-            </span>
-          </div>
+          <h4>Data Archives</h4>
         </div>
         {/* Desktop Accordion */}
         <div className="bg-white shadow mt-3 d-none d-md-block">

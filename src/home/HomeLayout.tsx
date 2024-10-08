@@ -68,7 +68,7 @@ export default function HomeLayout() {
       case 1:
         return `${portName} has been activated by the local server. Would you like to configure it now?`;
       case 2:
-        return `${portName} has been inactive during display. Please check for connection issues and reconfigure after activation.`;
+        return `${portName} has been inactive during display. Please check for connection issues.`;
       case 3:
         return `${portName}'s current reading has exceeded the upper threshold. Automated actuation has been triggered.`;
       case 4:
@@ -164,7 +164,7 @@ export default function HomeLayout() {
         const snapshot = await get(ref(db, `Users/${currentUser?.uid}`));
         if (snapshot.exists()) {
           const firebaseSnapshot = snapshot.val();
-          setAdmin(firebaseSnapshot === "admin");
+          setAdmin(firebaseSnapshot === "A");
         }
       } catch (error) {
         console.error(error);

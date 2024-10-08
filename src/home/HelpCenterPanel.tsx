@@ -1,15 +1,20 @@
-// UNFINISHED
-
+import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
+import QuickNav from "../help-center/QuickNav";
+import GetStarted from "../help-center/GetStarted";
+import FAQ from "../help-center/FAQ";
+import ContactUs from "../help-center/ContactUs";
+import type { ContextType } from "./HomeLayout";
 
 export default function HelpCenterPanel() {
+  const { setPrompt } = useOutletContext<ContextType>();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   return (
     <div className="d-flex flex-column flex-grow-1 pb-4 px-4">
       <div className="d-flex justify-content-between mt-4">
         <h4>Help Center</h4>
-        <div className="input-group" style={{ maxWidth: "500px" }}>
+        <div className="input-group w-50">
           <input
             type="text"
             className="form-control"
@@ -22,74 +27,15 @@ export default function HelpCenterPanel() {
           </span>
         </div>
       </div>
-      <div className="d-flex gap-3 mt-3" style={{ height: "150px" }}>
-        <div
-          className="d-flex align-items-center justify-content-center bg-white shadow rounded h-100 p-4"
-          style={{ width: "250px" }}
-        >
-          <div className="text-center">
-            <div
-              className="d-flex align-items-center justify-content-center border border-primary-subtle rounded mx-auto"
-              style={{ width: "35px", height: "35px" }}
-            >
-              <i
-                className="bi bi-emoji-smile text-primary"
-                style={{ fontSize: "18px" }}
-              />
-            </div>
-            <h6 className="mt-2 mb-1">Get Started</h6>
-            <p className="text-muted m-0" style={{ fontSize: "11px" }}>
-              Everything you need to know how to get started with AquaSense
-              Visuals
-            </p>
-          </div>
-        </div>
-        <div
-          className="d-flex align-items-center justify-content-center bg-white shadow rounded h-100 p-4"
-          style={{ width: "250px" }}
-        >
-          <div className="text-center">
-            <div
-              className="d-flex align-items-center justify-content-center border border-primary-subtle rounded mx-auto"
-              style={{ width: "35px", height: "35px" }}
-            >
-              <i
-                className="bi bi-emoji-smile text-primary"
-                style={{ fontSize: "18px" }}
-              />
-            </div>
-            <h6 className="mt-2 mb-1"> Management </h6>
-            <p className="text-muted m-0" style={{ fontSize: "11px" }}>
-              Everything you need to know how to get started with AquaSense
-              Visuals
-            </p>
-          </div>
-        </div>
-        <div
-          className="d-flex align-items-center justify-content-center bg-white shadow rounded h-100 p-4"
-          style={{ width: "250px" }}
-        >
-          <div className="text-center">
-            <div
-              className="d-flex align-items-center justify-content-center border border-primary-subtle rounded mx-auto"
-              style={{ width: "35px", height: "35px" }}
-            >
-              <i
-                className="bi bi-emoji-smile text-primary"
-                style={{ fontSize: "18px" }}
-              />
-            </div>
-            <h6 className="mt-2 mb-1"> Data Export </h6>
-            <p className="text-muted m-0" style={{ fontSize: "11px" }}>
-              Everything you need to know how to get started with AquaSense
-              Visuals
-            </p>
-          </div>
-        </div>
+      <QuickNav />
+      <div className="d-flex flex-grow-1 bg-white shadow rounded mt-3 p-4">
+        <GetStarted />
       </div>
-      <div className="d-flex flex-grow-1 bg-white shadow rounded mt-3 p-3">
-        {" "}
-        hey
+      <div className="d-flex flex-grow-1 bg-white shadow rounded mt-3 p-4">
+        <FAQ />
+      </div>
+      <div className="d-flex flex-grow-1 bg-white shadow rounded mt-3 p-4">
+        <ContactUs setPrompt={setPrompt} />
       </div>
     </div>
   );
