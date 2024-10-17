@@ -44,7 +44,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="d-flex flex-column w-100">
+    <div className="d-flex flex-column w-100" style={{ maxWidth: "400px" }}>
       <div className="d-flex flex-column my-2 w-100">
         <h2 className="fw-bold" style={{ fontSize: "32px" }}>
           Forgot Password?

@@ -88,7 +88,7 @@ export default function RegisterPage() {
           backgroundRepeat: "no-repeat",
         }}
       />
-      <div className="d-flex flex-grow-1 w-100 h-100 px-4 px-sm-5 py-3">
+      <div className="d-flex flex-grow-1 w-100 h-100 px-2 px-sm-5 py-3">
         <div className="d-flex flex-column w-100 mx-3">
           <div className="d-flex align-items-end mb-4">
             <img src={logo} alt="logo" style={{ width: "30px" }} />

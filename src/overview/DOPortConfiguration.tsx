@@ -105,12 +105,12 @@ export default function DOPortConfiguration({
     setActuationError("");
 
     if (configuration.port === -1) {
-      setPortError("Please select an active port to configure");
+      setPortError("Please select an active channel to configure");
       return;
     }
 
     if (configuration.define === "") {
-      setDefineError("Please specify the sensor type for this port");
+      setDefineError("Please specify the sensor type for this channel");
       return;
     }
 
@@ -234,7 +234,7 @@ export default function DOPortConfiguration({
       <div className="modal-dialog modal-lg modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h1 className="modal-title fs-5">Port Configuration</h1>
+            <h1 className="modal-title fs-5">Port Channel Configuration</h1>
             <button
               type="button"
               className="btn-close"
@@ -256,7 +256,7 @@ export default function DOPortConfiguration({
                       })
                     }
                   >
-                    <option value="-1">Select Port Assignment</option>
+                    <option value="-1">Select Channel Assignment</option>
                     {portList.map(
                       (port, index) =>
                         port.active &&
@@ -275,7 +275,8 @@ export default function DOPortConfiguration({
                       <i className="bi bi-info-circle" />
                       <span className="my-2">
                         {" "}
-                        Inactive ports are not shown and cannot be configured
+                        Inactive port channels are not shown and cannot be
+                        configured
                       </span>
                     </div>
                   ) : (
@@ -456,8 +457,9 @@ export default function DOPortConfiguration({
               <>
                 <div className="modal-body d-flex flex-column">
                   <p>
-                    You are about to apply the following changes to the port.
-                    Please review the details below and confirm your changes.
+                    You are about to apply the following changes to the port
+                    channel. Please review the details below and confirm your
+                    changes.
                   </p>
                   <div>
                     <ul className="list-unstyled">

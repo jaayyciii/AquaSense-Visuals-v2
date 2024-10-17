@@ -82,7 +82,7 @@ export default function SDPortConfiguration({
     setActuationError("");
 
     if (newConfiguration.define === "") {
-      setDefineError("Please specify the sensor type for this port");
+      setDefineError("Please specify the sensor type for this channel");
       return;
     }
 
@@ -174,7 +174,7 @@ export default function SDPortConfiguration({
       <div className="modal-dialog modal-lg modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h1 className="modal-title fs-5">Port Configuration</h1>
+            <h1 className="modal-title fs-5">Port Channel Configuration</h1>
             <button
               type="button"
               className="btn-close"
@@ -190,7 +190,7 @@ export default function SDPortConfiguration({
                     role="alert"
                     style={{ fontSize: "13px" }}
                   >
-                    Port reconfigurations will{" "}
+                    Port channel reconfigurations will{" "}
                     <b>erase the displayed data history</b> to avoid
                     misinterpretations. However, you can still retrieve data by
                     exporting the data archive located at your navigation bar.
@@ -199,16 +199,6 @@ export default function SDPortConfiguration({
                   <select className="form-select" value={portIndex} disabled>
                     <option>{portName}</option>
                   </select>
-                  <div
-                    className="form-text text-info m-0"
-                    style={{ fontSize: "13px" }}
-                  >
-                    <i className="bi bi-info-circle" />
-                    <span className="my-2">
-                      {" "}
-                      Inactive ports are not shown and cannot be configured
-                    </span>
-                  </div>
                   {/* Sensor Type  */}
                   <div className="input-group mt-3">
                     <input
@@ -433,9 +423,9 @@ export default function SDPortConfiguration({
                 <div className="modal-body d-flex flex-column">
                   <p>
                     You are about to <b>apply the following changes</b> to the
-                    port. Please review the details outlined below carefully.
-                    Once you've confirmed that everything is correct, proceed to
-                    confirm your action.
+                    port channel. Please review the details outlined below
+                    carefully. Once you've confirmed that everything is correct,
+                    proceed to confirm your action.
                   </p>
                   <div>
                     <ul className="list-unstyled">

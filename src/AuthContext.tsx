@@ -61,7 +61,7 @@ export function AuthProvider({ children }: React.PropsWithChildren<{}>) {
             .then(() => {
               try {
                 update(ref(db, `Users`), {
-                  [userCredential.user.uid]: "Guest",
+                  [userCredential.user.uid]: "G",
                 });
               } catch (error) {
                 console.error(error);

@@ -6,8 +6,8 @@ export default function LogInLayout() {
   return (
     <div className="d-flex" style={{ height: "100vh", overflow: "hidden" }}>
       <div
-        className="d-flex flex-grow-1 h-100 px-4 py-3 border"
-        style={{ minWidth: "430px", maxWidth: "430px" }}
+        className="d-flex flex-grow-1 h-100 px-auto px-sm-4 py-3"
+        style={{ minWidth: "430px" }}
       >
         <div className="d-flex flex-column w-100 mx-2">
           {/* Desktop Header View */}
@@ -25,7 +25,7 @@ export default function LogInLayout() {
             </h1>
           </div>
           {/* React Router Outlet */}
-          <div className="d-flex flex-grow-1 mt-5 mt-sm-0 align-items-start align-items-sm-center">
+          <div className="d-flex flex-grow-1 mt-5 mt-sm-0 align-items-start align-items-sm-center justify-content-center">
             <Outlet />
           </div>
           {/* Website Footer */}

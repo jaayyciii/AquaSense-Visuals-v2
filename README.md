@@ -50,7 +50,7 @@ Currently, two official plugins are available:
 Perform the following:
 
 - NPM Install Vercel CLI: npm install -g vercel
-- Build the application, npm run build
-- Run vercel; if restricted, Set-ExecutionPolicy RemoteSigned -Scope CurrentUser.
-- Log in to your email and verify your account
+- build the application, npm run build
+- run vercel; if restricted, Set-ExecutionPolicy RemoteSigned -Scope CurrentUser.
+- log in to your email and verify your account
 - revert execution policy, Set-ExecutionPolicy Restricted -Scope CurrentUser

@@ -105,7 +105,11 @@ export default function DataArchivePanel() {
           <div
             className="bg-white shadow accordion"
             id="portArchive"
-            style={{ maxWidth: "366px", overflowX: "hidden" }}
+            style={{
+              minWidth: "344px",
+              maxWidth: "366px",
+              overflowX: "hidden",
+            }}
           >
             {!portListLoading &&
               deviceArchives.map((portArchives) => (

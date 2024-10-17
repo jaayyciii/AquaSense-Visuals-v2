@@ -42,14 +42,14 @@ export default function HomeLayout() {
   const [admin, setAdmin] = useState<boolean>(false);
   // list of ports with its active and display details
   const [portList, setPortList] = useState<PortListType[]>([
-    { name: "Port A", active: false, display: false },
-    { name: "Port B", active: false, display: false },
-    { name: "Port C", active: false, display: false },
-    { name: "Port D", active: false, display: false },
-    { name: "Port E", active: false, display: false },
-    { name: "Port F", active: false, display: false },
-    { name: "Port G", active: false, display: false },
-    { name: "Port H", active: false, display: false },
+    { name: "Channel 0", active: false, display: false },
+    { name: "Channel 1", active: false, display: false },
+    { name: "Channel 2", active: false, display: false },
+    { name: "Channel 3", active: false, display: false },
+    { name: "Channel 4", active: false, display: false },
+    { name: "Channel 5", active: false, display: false },
+    { name: "Channel 6", active: false, display: false },
+    { name: "Channel 7", active: false, display: false },
   ]);
   // port list loading state
   const [portListLoading, isPortListLoading] = useState<boolean>(true);
