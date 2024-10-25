@@ -6,8 +6,14 @@ import type { ContextType } from "./HomeLayout";
 
 export default function DeviceOverviewPanel() {
   // gets the props through outlet context
-  const { portListLoading, portList, setPrompt, admin } =
-    useOutletContext<ContextType>();
+  const {
+    portListLoading,
+    portList,
+    adcLoading,
+    adcFormula,
+    setPrompt,
+    admin,
+  } = useOutletContext<ContextType>();
 
   return (
     <>
@@ -17,6 +23,8 @@ export default function DeviceOverviewPanel() {
           <DOConfigurationButton
             portListLoading={portListLoading}
             portList={portList}
+            adcLoading={adcLoading}
+            adcFormula={adcFormula}
             setPrompt={setPrompt}
             admin={admin}
           />

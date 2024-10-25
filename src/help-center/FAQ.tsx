@@ -165,6 +165,49 @@ export default function FAQ() {
               </div>
             </div>
           </div>
+          <div className="accordion-item">
+            <h2 className="accordion-header">
+              <button
+                className="accordion-button collapsed fw-medium"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#faqs5"
+              >
+                What does the term "ADC Formula" mean when configuring a port
+                channel?
+              </button>
+            </h2>
+            <div
+              id="faqs5"
+              className="accordion-collapse collapse"
+              data-bs-parent="#faqsaccordion"
+            >
+              <div className="accordion-body" style={{ fontSize: "14px" }}>
+                The Analog-to-Digital Conversion (ADC) formula refers to how
+                sensor readings are converted from analog values (in millivolts)
+                into the corresponding unit of measurement for the connected
+                sensor.
+                <br />
+                <br />
+                When selecting an ADC formula, it's important to ensure that the
+                correct one is used for the appropriate port to avoid
+                misinterpretation of data. If you made an error in your initial
+                port channel configuration, you can reconfigure the port through
+                the{" "}
+                <span className="fw-medium text-primary">
+                  Sensor Details Page
+                </span>
+                .
+                <br />
+                <br />
+                <h6>Can't find your ADC Formula?</h6>
+                ADC formulas are generated during sensor calibration, so ensure
+                they're saved correctly. When assigning such formula to a port
+                channel, know the formula ID and label to match it with the
+                correct analog-to-digital conversion.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

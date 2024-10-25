@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ref, onValue, get } from "firebase/database";
 import { db } from "../FirebaseConfig";
 import { useAuth } from "../AuthContext";
+import emailjs from "@emailjs/browser";
 import Notifications from "../notification/Notifications";
 import Notify from "../notification/Notify";
 import NavPanel from "./NavPanel";
@@ -28,9 +29,16 @@ export type PortListType = {
   display: boolean;
 };
 
+export type ADCFormulaType = {
+  id: number;
+  label: string;
+};
+
 export type ContextType = {
   portListLoading: boolean;
   portList: PortListType[];
+  adcLoading: boolean;
+  adcFormula: ADCFormulaType[];
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
   admin: boolean;
 };
@@ -57,8 +65,17 @@ export default function HomeLayout() {
   const [notifications, setNotifications] = useState<NotificationsType[]>([]);
   // counts the number of unviewed/ unhandled notifications for UX
   const [nView, setNView] = useState<number>(0);
+  // adc formula
+  const [adcFormula, setADCFormula] = useState<ADCFormulaType[]>([]);
+  // loading ADC formulas
+  const [adcLoading, isADCLoading] = useState<boolean>(true);
   // sets the instantaneous prompt/ notification for UX
   const [prompt, setPrompt] = useState<string>("");
+
+  // initialize EmailJS with the public key
+  useEffect(() => {
+    emailjs.init(import.meta.env.VITE_EMAILJS_KEY);
+  }, []);
 
   // renders the actual message based on the type of notification
   function getMessage(type: number, portIndex: number) {
@@ -68,7 +85,7 @@ export default function HomeLayout() {
       case 1:
         return `${portName} has been activated by the local server. Would you like to configure it now?`;
       case 2:
-        return `${portName} has been inactive during display. Please check for connection issues.`;
+        return `${portName} suddenly became inactive while on display. Please check for connection issues`;
       case 3:
         return `${portName}'s current reading has exceeded the upper threshold. Automated actuation has been triggered.`;
       case 4:
@@ -157,6 +174,33 @@ export default function HomeLayout() {
     return () => unsubscribe();
   }, []);
 
+  // gets the list of adc formulas
+  useEffect(() => {
+    isADCLoading(true);
+    const unsubscribe = onValue(ref(db, `ADCFormula/`), (snapshot) => {
+      try {
+        if (snapshot.exists()) {
+          const firebaseSnapshot = snapshot.val();
+          const formulaIDS = Object.keys(firebaseSnapshot);
+          const newADCFormulas: ADCFormulaType[] = formulaIDS.map(
+            (ID: string) => {
+              return {
+                id: parseInt(ID),
+                label: firebaseSnapshot[ID],
+              };
+            }
+          );
+          setADCFormula(newADCFormulas);
+          isADCLoading(false);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   // get user's role status for access control
   useEffect(() => {
     const fetchRole = async () => {
@@ -173,6 +217,36 @@ export default function HomeLayout() {
 
     fetchRole();
   }, [currentUser]);
+
+  // sets an alert whenever a port is deactivated while on display
+  // useEffect(() => {
+  //   if (portListLoading) return;
+
+  //   portList.map((port, portIndex) => {
+  //     if (port.display) {
+  //       if (!port.active) {
+  //         try {
+  //           const num = Math.floor(Math.random() * 100);
+  //           update(ref(db, "Notifications"), {
+  //             [num]: {
+  //               port: portIndex,
+  //               timestamp: new Date()
+  //                 .toLocaleString("en-US", {
+  //                   dateStyle: "short",
+  //                   timeStyle: "medium",
+  //                 })
+  //                 .replace(/\//g, "-"),
+  //               type: 2,
+  //               viewed: "F",
+  //             },
+  //           });
+  //         } catch (error) {
+  //           console.error(error);
+  //         }
+  //       }
+  //     }
+  //   });
+  // }, [portList]);
 
   return (
     <>
@@ -195,7 +269,16 @@ export default function HomeLayout() {
         <div style={{ minHeight: "55px" }} />
         <div className="d-flex flex-row flex-grow-1">
           <div className="d-none d-md-flex" style={{ minWidth: "260px" }} />
-          <Outlet context={{ portListLoading, portList, setPrompt, admin }} />
+          <Outlet
+            context={{
+              portListLoading,
+              portList,
+              adcLoading,
+              adcFormula,
+              setPrompt,
+              admin,
+            }}
+          />
         </div>
         <div className="d-block d-md-none" style={{ minHeight: "55px" }} />
       </div>

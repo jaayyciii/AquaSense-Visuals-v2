@@ -122,8 +122,6 @@ export default function DataExport({
       (record) => record.timestamp >= download.startTime
     );
 
-    console.log(download);
-
     if (download.extension === "csv") {
       downloadCSV(exportHistory);
     } else {

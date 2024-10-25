@@ -4,10 +4,13 @@ import logo from "../assets/logo.png";
 
 export default function LogInLayout() {
   return (
-    <div className="d-flex" style={{ height: "100vh", overflow: "hidden" }}>
+    <div
+      className="d-flex"
+      style={{ width: "100vw", height: "100vh", overflow: "hidden" }}
+    >
       <div
         className="d-flex flex-grow-1 h-100 px-auto px-sm-4 py-3"
-        style={{ minWidth: "430px" }}
+        style={{ minWidth: "400px" }}
       >
         <div className="d-flex flex-column w-100 mx-2">
           {/* Desktop Header View */}

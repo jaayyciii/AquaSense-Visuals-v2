@@ -1,10 +1,12 @@
 import DOPortConfiguration from "./DOPortConfiguration";
-import type { PortListType } from "../home/HomeLayout";
+import type { PortListType, ADCFormulaType } from "../home/HomeLayout";
 
 // component props
 export type DOConfigurationProps = {
   portListLoading: boolean;
   portList: PortListType[];
+  adcLoading: boolean;
+  adcFormula: ADCFormulaType[];
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
   admin: boolean;
 };
@@ -12,6 +14,8 @@ export type DOConfigurationProps = {
 export default function DOConfigurationButton({
   portListLoading,
   portList,
+  adcLoading,
+  adcFormula,
   setPrompt,
   admin,
 }: DOConfigurationProps) {
@@ -21,6 +25,8 @@ export default function DOConfigurationButton({
       <DOPortConfiguration
         portListLoading={portListLoading}
         portList={portList}
+        adcLoading={adcLoading}
+        adcFormula={adcFormula}
         setPrompt={setPrompt}
         admin={admin}
       />

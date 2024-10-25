@@ -11,7 +11,6 @@ import LineGraph from "../sensor-details/LineGraph";
 import Numerics from "../sensor-details/Numerics";
 import DataHistory from "../sensor-details/DataHistory";
 import type { ContextType } from "./HomeLayout";
-
 import loadingtile from "../assets/loadingtile.gif";
 
 // typescript data types
@@ -21,6 +20,7 @@ export type PortConfigurationType = {
   threshold: [number, number];
   timestamp: Date;
   unit: string;
+  formula: number;
 };
 
 export type HistoryType = {
@@ -36,8 +36,14 @@ export type ActuationTriggerType = {
 export default function SensorDetailPanel() {
   const navigate = useNavigate();
   // gets the props through outlet context
-  const { portListLoading, portList, setPrompt, admin } =
-    useOutletContext<ContextType>();
+  const {
+    portListLoading,
+    portList,
+    adcLoading,
+    adcFormula,
+    setPrompt,
+    admin,
+  } = useOutletContext<ContextType>();
 
   // gets the index value from the URL Search
   const location = useLocation();
@@ -58,6 +64,7 @@ export default function SensorDetailPanel() {
       threshold: [0, 0],
       timestamp: new Date(0),
       unit: "",
+      formula: -1,
     });
   // holds the current actuation state
   const [actuationTrigger, setActuationTrigger] =
@@ -97,6 +104,7 @@ export default function SensorDetailPanel() {
               ],
               timestamp: new Date(firebaseSnapshot.timestamp),
               unit: firebaseSnapshot.unit,
+              formula: firebaseSnapshot.formula,
             });
             isRetrievingConfiguration(false);
           }
@@ -124,8 +132,9 @@ export default function SensorDetailPanel() {
           const days = Object.values(snapshot.val());
           const newHistory: HistoryType[] = days
             .flatMap((records: any, index) => {
+              const recordsInArray = Object.values(records);
               let currentDate = new Date(date[index]);
-              return records.map((record: any) => {
+              return recordsInArray.map((record: any) => {
                 const newRecord: HistoryType = {
                   data: record.data,
                   timestamp: currentDate,
@@ -249,11 +258,13 @@ export default function SensorDetailPanel() {
               portIndex={portIndex}
               portName={portList[portIndex].name}
               portConfiguration={portConfiguration}
+              adcFormula={adcFormula}
               setPrompt={setPrompt}
               disable={
                 actuationTrigger.actuate ||
                 retrievingConfiguration ||
-                portListLoading
+                portListLoading ||
+                adcLoading
               }
               admin={admin}
             />

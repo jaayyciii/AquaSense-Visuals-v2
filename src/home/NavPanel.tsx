@@ -188,7 +188,7 @@ const MobileNavigationBar = ({
       <i className="bi bi-bell" style={{ fontSize: "25px" }} />
       {nView > 0 && (
         <span
-          className="position-absolute ms-3 mb-3 bg-danger border border-light rounded-circle"
+          className="position-absolute ms-3 mb-3 bg-danger border border-primary rounded-circle"
           style={{ padding: "5px" }}
         />
       )}

@@ -56,7 +56,7 @@ export default function LogIn() {
   }
 
   return (
-    <div className="d-flex flex-column w-100" style={{ maxWidth: "400px" }}>
+    <div className="d-flex flex-column w-100" style={{ maxWidth: "380px" }}>
       <div className="d-flex flex-column my-2">
         <h2 className="fw-bold" style={{ fontSize: "32px" }}>
           Log in.

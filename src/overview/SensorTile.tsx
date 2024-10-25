@@ -26,7 +26,6 @@ export default function SensorTile({
   setPrompt,
 }: SensorTileProps) {
   const [sensorTileLoading, isSensorTileLoading] = useState<boolean>(true);
-
   // stores the existing configuration to set the chart's features
   const [port, setPort] = useState<PortConfigurationType>({
     define: "",
@@ -96,7 +95,7 @@ export default function SensorTile({
             <h5 style={{ fontSize: "18px" }}>{port.define}</h5>
             <h6
               className={`card-subtitle fw-light ${
-                active ? "text-success" : "text-danger"
+                active ? "text-success" : "badge text-bg-danger text-wrap"
               }`}
               style={{ fontSize: "11px" }}
             >
@@ -141,6 +140,7 @@ export default function SensorTile({
                 ? "Too High"
                 : "Normal"}
             </span>
+            <br />
           </div>
         </div>
       )}

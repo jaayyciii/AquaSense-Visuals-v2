@@ -9,6 +9,7 @@ export default function SDPortConfiguration({
   portIndex,
   portName,
   portConfiguration,
+  adcFormula,
   setPrompt,
   disable,
   admin,
@@ -22,6 +23,7 @@ export default function SDPortConfiguration({
   const [newActuationMode, setNewActuationMode] = useState<number>(1);
   // user input errors
   const [defineError, setDefineError] = useState<string>("");
+  const [formulaError, setFormulaError] = useState<string>("");
   const [unitError, setUnitError] = useState<string>("");
   const [rangeError, setRangeError] = useState<string>("");
   const [actuationError, setActuationError] = useState<string>("");
@@ -43,7 +45,9 @@ export default function SDPortConfiguration({
     setNewConfiguration(portConfiguration);
     setNewActuationMode(1);
     setDefineError("");
+    setFormulaError("");
     setUnitError("");
+    setRangeError("");
     setActuationError("");
     setInputVerified(false);
   }
@@ -66,7 +70,10 @@ export default function SDPortConfiguration({
       case 4:
         setNewConfiguration({
           ...newConfiguration,
-          threshold: [newConfiguration.range[0], newConfiguration.range[1]],
+          threshold: [
+            -340282346638528859811704183484516925440.0,
+            340282346638528859811704183484516925440.0,
+          ],
         });
         break;
       default:
@@ -86,6 +93,13 @@ export default function SDPortConfiguration({
       return;
     }
 
+    if (newConfiguration.formula === -1) {
+      setFormulaError(
+        "Please select an ADC formula for sensor reading conversion"
+      );
+      return;
+    }
+
     if (newConfiguration.unit === "") {
       setUnitError("Please enter the SI unit for the sensor readings.");
       return;
@@ -101,14 +115,16 @@ export default function SDPortConfiguration({
       return;
     } else {
       updateActuationValues();
-      if (
-        newConfiguration.threshold[0] < newConfiguration.range[0] ||
-        newConfiguration.threshold[1] > newConfiguration.range[1]
-      ) {
-        setActuationError(
-          `Threshold values must be within the sensor's range: ${newConfiguration.range[0]} - ${newConfiguration.range[1]}`
-        );
-        return;
+      if (newActuationMode !== 4) {
+        if (
+          newConfiguration.threshold[0] < newConfiguration.range[0] ||
+          newConfiguration.threshold[1] > newConfiguration.range[1]
+        ) {
+          setActuationError(
+            `Threshold values must be within the sensor's range: ${newConfiguration.range[0]} - ${newConfiguration.range[1]}`
+          );
+          return;
+        }
       }
       if (newConfiguration.threshold[0] > newConfiguration.threshold[1]) {
         setActuationError(
@@ -144,6 +160,7 @@ export default function SDPortConfiguration({
           .toLocaleString("en-US", { dateStyle: "short", timeStyle: "medium" })
           .replace(/\//g, "-"),
         unit: newConfiguration.unit,
+        formula: newConfiguration.formula,
       });
 
       setPrompt(
@@ -221,6 +238,35 @@ export default function SDPortConfiguration({
                     >
                       <i className="bi bi-exclamation-circle-fill" />
                       <span className="my-2"> {defineError}</span>
+                    </div>
+                  )}
+                  {/* Sensor ADC Formula */}
+                  <select
+                    className="form-select mt-3"
+                    value={newConfiguration.formula}
+                    onChange={(e) =>
+                      setNewConfiguration({
+                        ...newConfiguration,
+                        formula: parseInt(e.target.value, 10),
+                      })
+                    }
+                  >
+                    <option value="-1">Select ADC Formula</option>
+                    {adcFormula.map((formula, index) => (
+                      <option key={index} value={formula.id}>
+                        {formula.id}
+                        {""} : {""}
+                        {formula.label}
+                      </option>
+                    ))}
+                  </select>
+                  {formulaError !== "" && (
+                    <div
+                      className="form-text text-danger m-0"
+                      style={{ fontSize: "13px" }}
+                    >
+                      <i className="bi bi-exclamation-circle-fill" />
+                      <span className="my-2"> {formulaError}</span>
                     </div>
                   )}
                   {/* Sensor SI Unit */}

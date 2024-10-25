@@ -121,7 +121,8 @@ export default function UpdateProfile({
               style={{ fontSize: "12px" }}
             >
               <code>
-                {" "}
+                User UID: {currentUser?.uid}
+                <br />
                 Account Created: {currentUser?.metadata.creationTime}
                 <br />
                 Last Sign In: {currentUser?.metadata.lastSignInTime}

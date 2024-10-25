@@ -92,8 +92,8 @@ export default function GetStarted() {
               sensor is connected to which port for accurate readings.
             </li>
             <li className="mb-2">
-              After selecting a port, define the sensor type and the appropriate
-              unit of measurement.
+              After selecting a port, define the sensor type, ADC formula to be
+              used in conversion, and the appropriate unit of measurement.
             </li>
             <li className="mb-2">
               For threshold configuration, select the appropriate mode from the

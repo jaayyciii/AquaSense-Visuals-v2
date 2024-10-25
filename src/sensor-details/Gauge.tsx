@@ -14,9 +14,13 @@ export default function Gauge({ current, range, threshold, unit }: GaugeProps) {
       <h5 style={{ fontSize: "18px" }}>Sensor Reading</h5>
       <small className="text-muted lh-sm mt-3" style={{ fontSize: "12px" }}>
         <strong>Sensor Range:</strong> {range[0]} {unit} - {range[1]} {unit}
-        <br />
-        <strong>Safe Range:</strong> {threshold[0]} {unit} - {threshold[1]}{" "}
-        {unit}
+        {threshold[1] !== 340282346638528859811704183484516925440.0 && (
+          <>
+            <br />
+            <strong>Safe Range:</strong> {threshold[0]} {unit} - {threshold[1]}{" "}
+            {unit}
+          </>
+        )}
       </small>
       <div className="align-self-center my-5" style={{ maxWidth: "220px" }}>
         <SensorGauge current={current} range={range} threshold={threshold} />

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "../AuthContext";
+import emailjs from "@emailjs/browser";
 
 type ContactUsProps = {
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
 };
 
 type MessageType = {
-  email: string;
   subject: string;
   message: string;
 };
@@ -14,19 +14,33 @@ type MessageType = {
 export default function ContactUs({ setPrompt }: ContactUsProps) {
   const { currentUser } = useAuth();
   const [message, setMessage] = useState<MessageType>({
-    email: currentUser?.email || "",
     subject: "",
     message: "",
   });
 
-  function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setPrompt("Your message has been successfully sent!");
-    setMessage({
-      ...message,
-      subject: "",
-      message: "",
-    });
+
+    try {
+      await emailjs.send("service_6berbqf", "template_sc30upb", {
+        from_name: currentUser?.displayName,
+        email_id: currentUser?.uid,
+        subject: message.subject,
+        message: message.message,
+      });
+      setMessage({
+        subject: "",
+        message: "",
+      });
+      setPrompt(
+        "Your message has been successfully sent! You can expect replies from our developers within 1 to 3 days."
+      );
+    } catch (error) {
+      console.error(error);
+      setPrompt(
+        "Oops! Something went wrong while sending your message. Please try again or check your connection"
+      );
+    }
   }
 
   return (
@@ -64,6 +78,7 @@ export default function ContactUs({ setPrompt }: ContactUsProps) {
               <textarea
                 className="form-control"
                 id="float2"
+                value={message.message}
                 placeholder="Enter your feedback, inquiries, and concerns"
                 style={{ height: "275px" }}
                 onChange={(e) =>
