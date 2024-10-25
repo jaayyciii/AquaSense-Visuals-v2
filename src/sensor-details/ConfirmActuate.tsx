@@ -12,7 +12,7 @@ export default function ConfirmActuate({
   function confirmActuate() {
     if (!admin) return;
 
-    set(ref(db, "Actuation/actuate"), actuationTrigger.actuate ? "F" : "T")
+    set(ref(db, "Actuation/command"), actuationTrigger.actuate ? "F" : "T")
       .then(() => {
         setPrompt(
           !actuationTrigger.actuate

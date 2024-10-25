@@ -29,6 +29,7 @@ export type HistoryType = {
 };
 
 export type ActuationTriggerType = {
+  command: string;
   actuate: boolean;
   control: boolean;
 };
@@ -69,6 +70,7 @@ export default function SensorDetailPanel() {
   // holds the current actuation state
   const [actuationTrigger, setActuationTrigger] =
     useState<ActuationTriggerType>({
+      command: "C",
       actuate: false,
       control: false,
     });
@@ -217,6 +219,7 @@ export default function SensorDetailPanel() {
         if (snapshot.exists()) {
           const firebaseSnapshot = snapshot.val();
           setActuationTrigger({
+            command: firebaseSnapshot.command,
             actuate: firebaseSnapshot.actuate === "T",
             control: firebaseSnapshot.control === "T",
           });
