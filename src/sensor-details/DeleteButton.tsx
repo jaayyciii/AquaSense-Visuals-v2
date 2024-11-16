@@ -23,7 +23,7 @@ export default function DeleteButton({
         portIndex={portIndex}
         name={name}
         setPrompt={setPrompt}
-        disable={disable}
+        disable={disable || !admin}
         admin={admin}
       />
       {/* Delete Button */}
@@ -34,7 +34,7 @@ export default function DeleteButton({
           data-bs-toggle="modal"
           data-bs-target="#deletePort"
           style={{ height: "35px" }}
-          disabled={disable}
+          disabled={disable || !admin}
         >
           <i className="bi bi-trash3" style={{ fontSize: "16px" }} />
         </button>

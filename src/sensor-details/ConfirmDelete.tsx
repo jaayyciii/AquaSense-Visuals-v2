@@ -49,8 +49,9 @@ export default function ConfirmDelete({
             />
           </div>
           <div className="modal-body">
-            Are you sure you want to delete this port channel? Consider
-            exporting your history first to avoid losing important information.
+            Are you sure you want to permanently delete this port channel?
+            Consider exporting your history first to avoid losing important
+            information.
           </div>
           <div className="modal-footer">
             <button

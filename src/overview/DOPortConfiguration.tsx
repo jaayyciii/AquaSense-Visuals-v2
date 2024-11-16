@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { ref, set, update, onValue } from "firebase/database";
+import { useRef, useState } from "react";
+import { ref, set, update } from "firebase/database";
 import { db } from "../FirebaseConfig";
 import { Modal } from "bootstrap";
 import type { DOConfigurationProps } from "./DOConfigurationButton";
@@ -12,15 +12,12 @@ type PortConfigurationType = {
   threshold: [number, number];
   timestamp: Date;
   unit: string;
-  formula: number;
 };
 
 export default function DOPortConfiguration({
-  portListLoading,
   portList,
-  adcLoading,
-  adcFormula,
   setPrompt,
+  disable,
   admin,
 }: DOConfigurationProps) {
   // modal reference
@@ -33,18 +30,15 @@ export default function DOPortConfiguration({
     threshold: [0, 0],
     timestamp: new Date(0),
     unit: "",
-    formula: -1,
   });
   // sets the actuation mode: lower, upper, double, non-bounded
   const [actuationMode, setActuationMode] = useState<number>(0);
   // user input errors
   const [portError, setPortError] = useState<string>("");
   const [defineError, setDefineError] = useState<string>("");
-  const [formulaError, setFormulaError] = useState<string>("");
   const [unitError, setUnitError] = useState<string>("");
+  const [rangeError, setRangeError] = useState<string>("");
   const [actuationError, setActuationError] = useState<string>("");
-  // loading threshold and range
-  const [rangeLoading, isRangeLoading] = useState<boolean>(true);
   // proceeds to confirmation page when user inputs have no errors
   const [inputVerified, setInputVerified] = useState<boolean>(false);
 
@@ -67,13 +61,12 @@ export default function DOPortConfiguration({
       threshold: [0, 0],
       timestamp: new Date(0),
       unit: "",
-      formula: -1,
     });
     setActuationMode(0);
     setPortError("");
     setDefineError("");
-    setFormulaError("");
     setUnitError("");
+    setRangeError("");
     setActuationError("");
     setInputVerified(false);
   }
@@ -124,15 +117,13 @@ export default function DOPortConfiguration({
       return;
     }
 
-    if (configuration.formula === -1) {
-      setFormulaError(
-        "Please select an ADC formula for sensor reading conversion"
-      );
+    if (configuration.unit === "") {
+      setUnitError("Please enter the SI unit for the sensor readings");
       return;
     }
 
-    if (configuration.unit === "") {
-      setUnitError("Please enter the SI unit for the sensor readings");
+    if (configuration.range[0] >= configuration.range[1]) {
+      setRangeError("The minimum range value cannot exceed the maximum range.");
       return;
     }
 
@@ -174,15 +165,15 @@ export default function DOPortConfiguration({
     try {
       await update(ref(db, `ConfigurationFiles/Ports/${configuration.port}`), {
         define: configuration.define,
+        range: {
+          max: configuration.range[1],
+          min: configuration.range[0],
+        },
         threshold: {
           max: configuration.threshold[1],
           min: configuration.threshold[0],
         },
-        timestamp: new Date()
-          .toLocaleString("en-US", { dateStyle: "short", timeStyle: "medium" })
-          .replace(/\//g, "-"),
         unit: configuration.unit,
-        formula: configuration.formula,
       });
 
       await set(
@@ -208,40 +199,6 @@ export default function DOPortConfiguration({
       dismissModal();
     }
   }
-
-  // gets the current range of the selected port, and sets the default threshold value to such
-  useEffect(() => {
-    setActuationMode(0);
-    if (configuration.port === -1) return;
-
-    isRangeLoading(true);
-    const unsubscribe = onValue(
-      ref(db, `ConfigurationFiles/Ports/${configuration.port}/range`),
-      (snapshot) => {
-        try {
-          if (snapshot.exists()) {
-            const firebaseSnapshot = snapshot.val();
-            setConfiguration({
-              ...configuration,
-              define: "",
-              range: [firebaseSnapshot.min, firebaseSnapshot.max],
-              threshold: [firebaseSnapshot.min, firebaseSnapshot.max],
-              unit: "",
-            });
-            isRangeLoading(false);
-          }
-        } catch (error) {
-          console.error(error);
-          setPrompt(
-            "Oops! Something went wrong while configuring your device. Please refresh the page and try again."
-          );
-          dismissModal();
-        }
-      }
-    );
-
-    return () => unsubscribe();
-  }, [configuration.port]);
 
   return (
     <div
@@ -295,8 +252,8 @@ export default function DOPortConfiguration({
                       <i className="bi bi-info-circle" />
                       <span className="my-2">
                         {" "}
-                        Inactive port channels are not shown and cannot be
-                        configured
+                        Inactive and unassigned ADC Formula port channels are
+                        hidden and non-configurable.
                       </span>
                     </div>
                   ) : (
@@ -320,7 +277,7 @@ export default function DOPortConfiguration({
                           define: e.target.value,
                         })
                       }
-                      disabled={configuration.port === -1 || rangeLoading}
+                      disabled={configuration.port === -1}
                     />
                     <span className="input-group-text">Sensor Type</span>
                   </div>
@@ -331,36 +288,6 @@ export default function DOPortConfiguration({
                     >
                       <i className="bi bi-exclamation-circle-fill" />
                       <span className="my-2"> {defineError}</span>
-                    </div>
-                  )}
-                  {/* Sensor ADC Formula */}
-                  <select
-                    className="form-select mt-3"
-                    value={configuration.formula}
-                    onChange={(e) =>
-                      setConfiguration({
-                        ...configuration,
-                        formula: parseInt(e.target.value, 10),
-                      })
-                    }
-                    disabled={configuration.port === -1 || adcLoading}
-                  >
-                    <option value="-1">Select ADC Formula</option>
-                    {adcFormula.map((formula, index) => (
-                      <option key={index} value={formula.id}>
-                        {formula.id}
-                        {""} : {""}
-                        {formula.label}
-                      </option>
-                    ))}
-                  </select>
-                  {formulaError !== "" && (
-                    <div
-                      className="form-text text-danger m-0"
-                      style={{ fontSize: "13px" }}
-                    >
-                      <i className="bi bi-exclamation-circle-fill" />
-                      <span className="my-2"> {formulaError}</span>
                     </div>
                   )}
                   {/* Sensor SI Unit */}
@@ -375,7 +302,7 @@ export default function DOPortConfiguration({
                           unit: e.target.value,
                         })
                       }
-                      disabled={configuration.port === -1 || rangeLoading}
+                      disabled={configuration.port === -1}
                     />
                     <span className="input-group-text">Measurement Unit</span>
                   </div>
@@ -388,6 +315,64 @@ export default function DOPortConfiguration({
                       <span className="my-2"> {unitError}</span>
                     </div>
                   )}
+                  {/* Sensor Range */}
+                  <h6 className="fw-normal mt-3"> Sensor Range </h6>
+                  <div className="input-group flex-grow-1 ">
+                    <input
+                      value={configuration.range[0]}
+                      className="form-control"
+                      onChange={(e) =>
+                        setConfiguration({
+                          ...configuration,
+                          range: [
+                            isNaN(parseFloat(e.target.value))
+                              ? 0
+                              : parseFloat(e.target.value),
+                            configuration.range[1],
+                          ],
+                        })
+                      }
+                      disabled={configuration.port === -1}
+                    />
+                    <span className="input-group-text">-</span>
+                    <input
+                      value={configuration.range[1]}
+                      className="form-control"
+                      onChange={(e) =>
+                        setConfiguration({
+                          ...configuration,
+                          range: [
+                            configuration.range[0],
+                            isNaN(parseFloat(e.target.value))
+                              ? 0
+                              : parseFloat(e.target.value),
+                          ],
+                        })
+                      }
+                      disabled={configuration.port === -1}
+                    />
+                  </div>
+                  {rangeError === "" ? (
+                    <div
+                      className="form-text text-info m-0"
+                      style={{ fontSize: "13px" }}
+                    >
+                      <i className="bi bi-info-circle" />
+                      <span className="my-2">
+                        {" "}
+                        Define an ideal range based on your sensor type to set
+                        the visualization limits effectively.
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      className="form-text text-danger m-0"
+                      style={{ fontSize: "13px" }}
+                    >
+                      <i className="bi bi-exclamation-circle-fill" />
+                      <span className="my-2"> {rangeError}</span>
+                    </div>
+                  )}
                   {/* Actuation */}
                   <div className="mt-3">
                     <h6 className="fw-normal"> Sensor Actuation </h6>
@@ -398,7 +383,7 @@ export default function DOPortConfiguration({
                         onChange={(e) =>
                           setActuationMode(parseInt(e.target.value))
                         }
-                        disabled={configuration.port === -1 || rangeLoading}
+                        disabled={configuration.port === -1}
                       >
                         <option value="0">Select Mode</option>
                         <option value="1">Double Bounded</option>
@@ -497,7 +482,7 @@ export default function DOPortConfiguration({
                     type="button"
                     className="btn btn-outline-primary"
                     onClick={verifyInput}
-                    disabled={portListLoading}
+                    disabled={disable}
                   >
                     Proceed
                   </button>
@@ -546,7 +531,7 @@ export default function DOPortConfiguration({
                   <button
                     type="submit"
                     className="btn btn-outline-primary"
-                    disabled={portListLoading}
+                    disabled={disable}
                   >
                     Save Changes
                   </button>

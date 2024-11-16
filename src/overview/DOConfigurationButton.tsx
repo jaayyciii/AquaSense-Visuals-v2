@@ -1,33 +1,27 @@
 import DOPortConfiguration from "./DOPortConfiguration";
-import type { PortListType, ADCFormulaType } from "../home/HomeLayout";
+import type { PortListType } from "../home/HomeLayout";
 
 // component props
 export type DOConfigurationProps = {
-  portListLoading: boolean;
   portList: PortListType[];
-  adcLoading: boolean;
-  adcFormula: ADCFormulaType[];
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
+  disable: boolean;
   admin: boolean;
 };
 
 export default function DOConfigurationButton({
-  portListLoading,
   portList,
-  adcLoading,
-  adcFormula,
   setPrompt,
+  disable,
   admin,
 }: DOConfigurationProps) {
   return (
     <>
       {/* Port Configuration Modal */}
       <DOPortConfiguration
-        portListLoading={portListLoading}
         portList={portList}
-        adcLoading={adcLoading}
-        adcFormula={adcFormula}
         setPrompt={setPrompt}
+        disable={disable || !admin}
         admin={admin}
       />
       {/* Port Configuration Button */}
@@ -37,7 +31,7 @@ export default function DOConfigurationButton({
           data-bs-toggle="modal"
           data-bs-target="#DOPortConfiguration"
           style={{ height: "35px" }}
-          disabled={portListLoading}
+          disabled={disable || !admin}
         >
           <i className="bi bi-gear" style={{ fontSize: "16px" }} />
         </button>

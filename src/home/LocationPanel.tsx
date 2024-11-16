@@ -23,7 +23,7 @@ export default function LocationPanel() {
       L.divIcon({
         className: "custom-icon",
         html: `<div style="background-color: ${color}; width: 15px; height: 15px; border-radius: 50%; border: 2px solid #fff;"></div>`,
-        iconSize: [20, 20],
+        iconSize: [50, 50],
         iconAnchor: [10, 10],
       });
 
@@ -36,13 +36,17 @@ export default function LocationPanel() {
     map.setView([10.3219525, 123.9500089]);
 
     // Static markers [1] Marine Station, [2] USC Talamban
-    L.marker([10.2863281, 124.0002601]).addTo(map);
-    L.marker([10.3539904, 123.9123256]).addTo(map);
+    L.marker([10.2863281, 124.0002601], {
+      icon: createCustomIcon("blue"),
+    }).addTo(map);
+    L.marker([10.3539904, 123.9123256], {
+      icon: createCustomIcon("blue"),
+    }).addTo(map);
 
     const onLocationSuccess = (position: Position) => {
       const { latitude, longitude } = position.coords;
 
-      L.marker([latitude, longitude], { icon: createCustomIcon("blue") })
+      L.marker([latitude, longitude], { icon: createCustomIcon("red") })
         .addTo(map)
         .bindPopup("You are here")
         .openPopup();
@@ -66,7 +70,7 @@ export default function LocationPanel() {
   }, []);
 
   return (
-    <div className="d-flex flex-grow-1 ">
+    <div className="d-flex flex-grow-1" style={{ width: "400px" }}>
       <div id="map" className="w-100 h-100" />
     </div>
   );

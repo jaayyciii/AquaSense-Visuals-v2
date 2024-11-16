@@ -1,21 +1,21 @@
 import { useCallback, useEffect } from "react";
 import { HistoryType } from "../home/SensorDetailPanel";
 
-const ExtrapolationDataPoints: number = 4;
-
 // component props
 type NumericsProps = {
   current: number;
   unit: string;
   history: HistoryType[];
-  predict: number;
-  setPredict: React.Dispatch<React.SetStateAction<number>>;
+  datapoints: number;
+  predict: number | null;
+  setPredict: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
 export default function Numerics({
   current,
   unit,
   history,
+  datapoints,
   predict,
   setPredict,
 }: NumericsProps) {
@@ -41,8 +41,8 @@ export default function Numerics({
 
   // gets the latest <ExtrapolationDataPoints> (as xy) values as data for extrapolation
   useEffect(() => {
-    const dataset = history.slice(0, ExtrapolationDataPoints);
-    if (dataset.length < ExtrapolationDataPoints) return () => setPredict(0);
+    const dataset = history.slice(0, datapoints);
+    if (dataset.length < datapoints) return () => setPredict(null);
 
     const xValues = dataset.map(({ timestamp }) => timestamp!.getTime());
     const yValues = dataset.map(({ data }) => data!);
@@ -67,7 +67,8 @@ export default function Numerics({
           Predicted Value (+30 minutes)
         </h5>
         <h2 className="my-2 text-white">
-          {predict.toFixed(2)} {unit}
+          {predict == null ? "-" : predict.toFixed(2)}{" "}
+          {predict == null ? "" : unit}
         </h2>
       </div>
     </div>

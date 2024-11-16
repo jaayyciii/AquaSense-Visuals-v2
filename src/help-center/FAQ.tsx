@@ -62,9 +62,10 @@ export default function FAQ() {
                     location.
                   </li>
                   <li className="mb-1">
-                    Verify that the sensor is securely plugged into the port. If
-                    it still doesn't work, try unplugging and plugging it back
-                    in, or move the sensor to another port.
+                    Verify that the sensor is securely plugged into the port by
+                    checking the local application. If it still doesn't work,
+                    try unplugging and plugging it back in, or move the sensor
+                    to another port.
                   </li>
                   <li className="mb-1">
                     Inspect the sensor for damage. If necessary, perform a
@@ -132,9 +133,8 @@ export default function FAQ() {
                 <br />
                 <br />
                 <h6>How to become an administrator?</h6>
-                Role assignments are managed exclusively by the developers.
-                Please contact us to confirm that you’ve been granted the
-                necessary permissions for your role.
+                Role assignments can only be managed on-site through the local
+                application.
               </div>
             </div>
           </div>
@@ -146,7 +146,8 @@ export default function FAQ() {
                 data-bs-toggle="collapse"
                 data-bs-target="#faqs4"
               >
-                I accidentally deleted a displayed port. How can I restore it?
+                I have already connected the sensor, why can't I still configure
+                it?
               </button>
             </h2>
             <div
@@ -155,56 +156,14 @@ export default function FAQ() {
               data-bs-parent="#faqsaccordion"
             >
               <div className="accordion-body" style={{ fontSize: "14px" }}>
-                Unfortunately, once a port is deleted, it cannot be restored.
-                However, you can still download the history from the data
-                archives.
+                Ensure the sensor is properly connected to the device. A
+                notification should appear upon connection, or you can check the
+                status through the local application.
                 <br />
                 <br />
-                If you’d like, you can reconfigure the deleted port to continue
-                monitoring the connected sensor.
-              </div>
-            </div>
-          </div>
-          <div className="accordion-item">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button collapsed fw-medium"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#faqs5"
-              >
-                What does the term "ADC Formula" mean when configuring a port
-                channel?
-              </button>
-            </h2>
-            <div
-              id="faqs5"
-              className="accordion-collapse collapse"
-              data-bs-parent="#faqsaccordion"
-            >
-              <div className="accordion-body" style={{ fontSize: "14px" }}>
-                The Analog-to-Digital Conversion (ADC) formula refers to how
-                sensor readings are converted from analog values (in millivolts)
-                into the corresponding unit of measurement for the connected
-                sensor.
-                <br />
-                <br />
-                When selecting an ADC formula, it's important to ensure that the
-                correct one is used for the appropriate port to avoid
-                misinterpretation of data. If you made an error in your initial
-                port channel configuration, you can reconfigure the port through
-                the{" "}
-                <span className="fw-medium text-primary">
-                  Sensor Details Page
-                </span>
-                .
-                <br />
-                <br />
-                <h6>Can't find your ADC Formula?</h6>
-                ADC formulas are generated during sensor calibration, so ensure
-                they're saved correctly. When assigning such formula to a port
-                channel, know the formula ID and label to match it with the
-                correct analog-to-digital conversion.
+                If the connection is detected but the issue persists, the admin
+                may not have assigned an ADC Formula for this channel,
+                preventing conversion of sensor readings to actual units.
               </div>
             </div>
           </div>

@@ -29,17 +29,11 @@ export type PortListType = {
   display: boolean;
 };
 
-export type ADCFormulaType = {
-  id: number;
-  label: string;
-};
-
 export type ContextType = {
   portListLoading: boolean;
   portList: PortListType[];
-  adcLoading: boolean;
-  adcFormula: ADCFormulaType[];
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
+  notifications: NotificationsType[];
   admin: boolean;
 };
 
@@ -65,10 +59,6 @@ export default function HomeLayout() {
   const [notifications, setNotifications] = useState<NotificationsType[]>([]);
   // counts the number of unviewed/ unhandled notifications for UX
   const [nView, setNView] = useState<number>(0);
-  // adc formula
-  const [adcFormula, setADCFormula] = useState<ADCFormulaType[]>([]);
-  // loading ADC formulas
-  const [adcLoading, isADCLoading] = useState<boolean>(true);
   // sets the instantaneous prompt/ notification for UX
   const [prompt, setPrompt] = useState<string>("");
 
@@ -83,7 +73,7 @@ export default function HomeLayout() {
 
     switch (type) {
       case 1:
-        return `${portName} has been activated by the local server. Would you like to configure it now?`;
+        return `${portName} has been activated by the local server. Please assign an ADC Formula and proceed with sensor configuration.`;
       case 2:
         return `${portName} suddenly became inactive while on display. Please check for connection issues`;
       case 3:
@@ -174,33 +164,6 @@ export default function HomeLayout() {
     return () => unsubscribe();
   }, []);
 
-  // gets the list of adc formulas
-  useEffect(() => {
-    isADCLoading(true);
-    const unsubscribe = onValue(ref(db, `ADCFormula/`), (snapshot) => {
-      try {
-        if (snapshot.exists()) {
-          const firebaseSnapshot = snapshot.val();
-          const formulaIDS = Object.keys(firebaseSnapshot);
-          const newADCFormulas: ADCFormulaType[] = formulaIDS.map(
-            (ID: string) => {
-              return {
-                id: parseInt(ID),
-                label: firebaseSnapshot[ID],
-              };
-            }
-          );
-          setADCFormula(newADCFormulas);
-          isADCLoading(false);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   // get user's role status for access control
   useEffect(() => {
     const fetchRole = async () => {
@@ -217,36 +180,6 @@ export default function HomeLayout() {
 
     fetchRole();
   }, [currentUser]);
-
-  // sets an alert whenever a port is deactivated while on display
-  // useEffect(() => {
-  //   if (portListLoading) return;
-
-  //   portList.map((port, portIndex) => {
-  //     if (port.display) {
-  //       if (!port.active) {
-  //         try {
-  //           const num = Math.floor(Math.random() * 100);
-  //           update(ref(db, "Notifications"), {
-  //             [num]: {
-  //               port: portIndex,
-  //               timestamp: new Date()
-  //                 .toLocaleString("en-US", {
-  //                   dateStyle: "short",
-  //                   timeStyle: "medium",
-  //                 })
-  //                 .replace(/\//g, "-"),
-  //               type: 2,
-  //               viewed: "F",
-  //             },
-  //           });
-  //         } catch (error) {
-  //           console.error(error);
-  //         }
-  //       }
-  //     }
-  //   });
-  // }, [portList]);
 
   return (
     <>
@@ -273,8 +206,7 @@ export default function HomeLayout() {
             context={{
               portListLoading,
               portList,
-              adcLoading,
-              adcFormula,
+              notifications,
               setPrompt,
               admin,
             }}

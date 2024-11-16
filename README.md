@@ -26,6 +26,7 @@ dependencies:
 - @mui/styled-engine-sc styled-components
 
 Date Library: dayjs
+EmailJS: @emailjs/browser
 
 # Environment Variables, .env
 

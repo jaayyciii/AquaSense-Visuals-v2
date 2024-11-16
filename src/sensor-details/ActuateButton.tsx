@@ -1,3 +1,4 @@
+import ConfirmActuate from "./ConfirmActuate";
 import type { ActuationTriggerType } from "../home/SensorDetailPanel";
 
 // component props
@@ -10,11 +11,25 @@ export type ActuateProps = {
 
 export default function ActuateButton({
   actuationTrigger,
+  setPrompt,
   disable,
   admin,
 }: ActuateProps) {
   return (
     <>
+      {/* Confirm Actuation Modal */}
+      <ConfirmActuate
+        actuationTrigger={actuationTrigger}
+        setPrompt={setPrompt}
+        disable={
+          !actuationTrigger.control ||
+          actuationTrigger.command === "T" ||
+          actuationTrigger.command === "F" ||
+          disable ||
+          !admin
+        }
+        admin={admin}
+      />
       {/* Actuate Button */}
       <div className="btn-group w-100">
         <button
@@ -25,10 +40,18 @@ export default function ActuateButton({
           data-bs-toggle="modal"
           data-bs-target="#actuate"
           style={{ height: "35px" }}
-          disabled={!actuationTrigger.control || disable || !admin}
+          disabled={
+            !actuationTrigger.control ||
+            actuationTrigger.command === "T" ||
+            actuationTrigger.command === "F" ||
+            disable ||
+            !admin
+          }
         >
           <i className="bi bi-moisture me-2" style={{ fontSize: "18px" }} />
-          {!actuationTrigger.actuate
+          {actuationTrigger.command === "T" || actuationTrigger.command === "F"
+            ? "Processing Request"
+            : !actuationTrigger.actuate
             ? "Trigger Water Change"
             : "Terminate Water Change"}
         </button>
@@ -39,7 +62,13 @@ export default function ActuateButton({
             data-bs-toggle="modal"
             data-bs-target="#actuate"
             style={{ maxWidth: "30px", height: "35px" }}
-            disabled={!actuationTrigger.control || disable}
+            disabled={
+              !actuationTrigger.control ||
+              actuationTrigger.command === "T" ||
+              actuationTrigger.command === "F" ||
+              disable ||
+              !admin
+            }
           >
             <div
               className="spinner-grow spinner-border-sm"

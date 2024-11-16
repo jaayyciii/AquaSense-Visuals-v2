@@ -16,8 +16,8 @@ export default function ConfirmActuate({
       .then(() => {
         setPrompt(
           !actuationTrigger.actuate
-            ? "System has successfully triggered the water change process. Please ensure that the reservoir has sufficient water for dilution."
-            : "System has successfully terminated the water change process."
+            ? "The trigger water change command has been sent to the server. Please wait a moment for processing, and ensure the reservoir has enough water for dilution."
+            : "The terminate water change command has been sent to the server. Please wait a moment for processing."
         );
       })
       .catch((error) => {
@@ -63,7 +63,7 @@ export default function ConfirmActuate({
               className="btn btn-outline-primary"
               data-bs-dismiss="modal"
               onClick={confirmActuate}
-              disabled={!actuationTrigger.control || disable}
+              disabled={disable}
             >
               {!actuationTrigger.actuate
                 ? "Trigger Water Change"

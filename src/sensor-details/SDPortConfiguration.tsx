@@ -9,7 +9,6 @@ export default function SDPortConfiguration({
   portIndex,
   portName,
   portConfiguration,
-  adcFormula,
   setPrompt,
   disable,
   admin,
@@ -23,7 +22,6 @@ export default function SDPortConfiguration({
   const [newActuationMode, setNewActuationMode] = useState<number>(1);
   // user input errors
   const [defineError, setDefineError] = useState<string>("");
-  const [formulaError, setFormulaError] = useState<string>("");
   const [unitError, setUnitError] = useState<string>("");
   const [rangeError, setRangeError] = useState<string>("");
   const [actuationError, setActuationError] = useState<string>("");
@@ -45,7 +43,6 @@ export default function SDPortConfiguration({
     setNewConfiguration(portConfiguration);
     setNewActuationMode(1);
     setDefineError("");
-    setFormulaError("");
     setUnitError("");
     setRangeError("");
     setActuationError("");
@@ -93,19 +90,12 @@ export default function SDPortConfiguration({
       return;
     }
 
-    if (newConfiguration.formula === -1) {
-      setFormulaError(
-        "Please select an ADC formula for sensor reading conversion"
-      );
-      return;
-    }
-
     if (newConfiguration.unit === "") {
       setUnitError("Please enter the SI unit for the sensor readings.");
       return;
     }
 
-    if (newConfiguration.range[0] > newConfiguration.range[1]) {
+    if (newConfiguration.range[0] >= newConfiguration.range[1]) {
       setRangeError("The minimum range value cannot exceed the maximum range.");
       return;
     }
@@ -156,11 +146,7 @@ export default function SDPortConfiguration({
           max: newConfiguration.threshold[1],
           min: newConfiguration.threshold[0],
         },
-        timestamp: new Date()
-          .toLocaleString("en-US", { dateStyle: "short", timeStyle: "medium" })
-          .replace(/\//g, "-"),
         unit: newConfiguration.unit,
-        formula: newConfiguration.formula,
       });
 
       setPrompt(
@@ -202,16 +188,6 @@ export default function SDPortConfiguration({
             {!inputVerified ? (
               <>
                 <div className="modal-body">
-                  <div
-                    className="alert alert-info text-justify"
-                    role="alert"
-                    style={{ fontSize: "13px" }}
-                  >
-                    Port channel reconfigurations will{" "}
-                    <b>erase the displayed data history</b> to avoid
-                    misinterpretations. However, you can still retrieve data by
-                    exporting the data archive located at your navigation bar.
-                  </div>
                   {/* Port Assignment */}
                   <select className="form-select" value={portIndex} disabled>
                     <option>{portName}</option>
@@ -238,35 +214,6 @@ export default function SDPortConfiguration({
                     >
                       <i className="bi bi-exclamation-circle-fill" />
                       <span className="my-2"> {defineError}</span>
-                    </div>
-                  )}
-                  {/* Sensor ADC Formula */}
-                  <select
-                    className="form-select mt-3"
-                    value={newConfiguration.formula}
-                    onChange={(e) =>
-                      setNewConfiguration({
-                        ...newConfiguration,
-                        formula: parseInt(e.target.value, 10),
-                      })
-                    }
-                  >
-                    <option value="-1">Select ADC Formula</option>
-                    {adcFormula.map((formula, index) => (
-                      <option key={index} value={formula.id}>
-                        {formula.id}
-                        {""} : {""}
-                        {formula.label}
-                      </option>
-                    ))}
-                  </select>
-                  {formulaError !== "" && (
-                    <div
-                      className="form-text text-danger m-0"
-                      style={{ fontSize: "13px" }}
-                    >
-                      <i className="bi bi-exclamation-circle-fill" />
-                      <span className="my-2"> {formulaError}</span>
                     </div>
                   )}
                   {/* Sensor SI Unit */}
@@ -336,8 +283,8 @@ export default function SDPortConfiguration({
                       <i className="bi bi-info-circle" />
                       <span className="my-2">
                         {" "}
-                        Adjusting the sensor range may constrain your readings.
-                        Please proceed only if you are certain it is necessary.
+                        Define an ideal range based on your sensor type to set
+                        the visualization limits effectively.
                       </span>
                     </div>
                   ) : (
@@ -503,11 +450,14 @@ export default function SDPortConfiguration({
                     type="button"
                     className="btn btn-primary"
                     onClick={() => setInputVerified(false)}
-                    disabled={disable}
                   >
                     Return
                   </button>
-                  <button type="submit" className="btn btn-outline-primary">
+                  <button
+                    type="submit"
+                    className="btn btn-outline-primary"
+                    disabled={disable}
+                  >
                     Save Changes
                   </button>
                 </div>

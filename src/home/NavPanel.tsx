@@ -71,14 +71,6 @@ const DesktopNavigationBar = ({
         <button
           className="btn btn-primary d-flex align-items-center fw-medium px-2 py-1 w-100"
           style={{ fontSize: "1.1em" }}
-          onClick={() => navigate("/home/data-archive")}
-        >
-          <i className="bi bi-archive me-3" style={{ fontSize: "20px" }} />
-          Data Archive
-        </button>
-        <button
-          className="btn btn-primary d-flex align-items-center fw-medium px-2 py-1 w-100"
-          style={{ fontSize: "1.1em" }}
           onClick={() => navigate("/home/location")}
         >
           <i className="bi bi-compass me-3" style={{ fontSize: "20px" }} />
@@ -167,12 +159,6 @@ const MobileNavigationBar = ({
       onClick={() => navigate("/home")}
     >
       <i className="bi bi-grid" style={{ fontSize: "25px" }} />
-    </button>
-    <button
-      className="btn btn-primary d-flex align-items-center px-3"
-      onClick={() => navigate("/home/data-archive")}
-    >
-      <i className="bi bi-archive" style={{ fontSize: "25px" }} />
     </button>
     <button
       className="btn btn-primary d-flex align-items-center px-3"

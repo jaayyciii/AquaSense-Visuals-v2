@@ -6,7 +6,7 @@ import type { HistoryType } from "../home/SensorDetailPanel";
 // component props
 type LineGraphProps = {
   history: HistoryType[];
-  predict: number;
+  predict: number | null;
 };
 
 export default function LineGraph({ history, predict }: LineGraphProps) {
@@ -27,6 +27,14 @@ export default function LineGraph({ history, predict }: LineGraphProps) {
     );
     const values = history.slice(0, 48).map((entry) => entry?.data ?? 0);
 
+    const newLabels = [...labels.reverse()];
+    const newValues = [...values.reverse()];
+
+    if (predict !== null) {
+      newLabels.push("Predicted at 30 minutes");
+      newValues.push(predict);
+    }
+
     // returns the complete details to be utilized by the line graph
     // sets the predicted value as the latest data with E.+30m label
     return {
@@ -34,7 +42,7 @@ export default function LineGraph({ history, predict }: LineGraphProps) {
       datasets: [
         {
           label: "Value",
-          data: [...values.reverse(), predict],
+          data: newValues,
           backgroundColor: [
             ...values.map((value) => (value === 0 ? "gray" : "white")),
             "royalblue",

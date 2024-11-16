@@ -4,7 +4,6 @@ import portconfiguration from "../assets/portconfiguration.png";
 import sensordetails from "../assets/sensordetails.png";
 import actuation from "../assets/actuation.png";
 import exporthistory from "../assets/exporthistory.png";
-import dataarchives from "../assets/dataarchives.png";
 
 export default function GetStarted() {
   const [page, setPage] = useState<number>(1);
@@ -57,6 +56,38 @@ export default function GetStarted() {
           </a>
         </li>
       </ol>
+      <nav>
+        <ul className="pagination justify-content-center m-0">
+          <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+            >
+              &laquo;
+            </button>
+          </li>
+          {[...Array(totalPages)].map((_, index) => (
+            <li
+              key={index}
+              className={`page-item ${page === index + 1 ? "active" : ""}`}
+            >
+              <button className="page-link" onClick={() => setPage(index + 1)}>
+                {index + 1}
+              </button>
+            </li>
+          ))}
+          <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages}
+            >
+              &raquo;
+            </button>
+          </li>
+        </ul>
+      </nav>
       {page === 1 && <></>}
       {page === 2 && (
         <>
@@ -88,12 +119,15 @@ export default function GetStarted() {
               />
             </div>
             <li className="mb-2">
-              Select an active port from the selection. Make sure you know which
-              sensor is connected to which port for accurate readings.
+              Select an active port from the list, ensuring you know which
+              sensor is connected to each port for accurate readings. If the
+              desired port is not listed, confirm if it has an assigned ADC
+              Formula in the local application; otherwise, the channel cannot be
+              configured.
             </li>
             <li className="mb-2">
-              After selecting a port, define the sensor type, ADC formula to be
-              used in conversion, and the appropriate unit of measurement.
+              After selecting a port, define the sensor type, unit of
+              measurement, and the sensor's range
             </li>
             <li className="mb-2">
               For threshold configuration, select the appropriate mode from the
@@ -162,8 +196,8 @@ export default function GetStarted() {
                 <span className="fw-medium text-primary">
                   Delete Port <i className="bi bi-trash3" />
                 </span>{" "}
-                - deletes the selected port from your Home Page and stops its
-                display.
+                - permanently deletes the selected port from your Home Page and
+                stops its display.
               </li>
               <li className="mb-2">
                 <span className="fw-medium text-primary">
@@ -229,13 +263,6 @@ export default function GetStarted() {
           <h5 className="mt-3" id="hted">
             How to Export Data
           </h5>
-          <p style={{ fontSize: "14px" }}>
-            In AquaSense Visuals, the exporting of recorded data is separated
-            into <a href="#ech">current history</a> and{" "}
-            <a href="#eah">archives</a>. To get started, follow the instructions
-            below:
-          </p>
-          <h6 id="ech">Exporting Current History</h6>
           <div className="d-flex justify-content-center">
             <img
               src={exporthistory}
@@ -270,7 +297,8 @@ export default function GetStarted() {
               predefined options, e.g., last 24 hours, 7 days, 4 weeks, 3
               months. Or, select a custom date range based on your needs.
               Remember, current history is capped at 3 months. Any data recorded
-              beyond this limit is now stored in your archives.
+              beyond this limit can only be exported on-site through the local
+              application.
             </li>
             <li className="mb-1">Select the file format for your export:</li>
             <ul className="text-muted">
@@ -289,87 +317,8 @@ export default function GetStarted() {
               file should start downloading automatically.
             </li>
           </ol>
-          <h6 id="eah"> Exporting Archived History </h6>
-          <div className="d-flex justify-content-center">
-            <img
-              src={dataarchives}
-              alt="dataarchives"
-              className="w-100 mb-4"
-              style={{ maxWidth: "700px" }}
-            />
-          </div>
-          <ol className="small">
-            <li className="mb-2">
-              On the navigation bar, click the{" "}
-              <span className="fw-semibold text-primary">
-                Data Archive <i className="bi bi-archive" />
-              </span>{" "}
-              button.
-            </li>
-            <li className="mb-2">
-              You will be redirected to a list of archives. Each archive should
-              display its ID, configured sensor type, range, threshold, and the
-              active duration under its corresponding port.
-            </li>
-            <li className="mb-2">
-              To export an archive, click the{" "}
-              <span className="fw-semibold text-primary">
-                Download Icon <i className="bi bi-file-earmark-arrow-down" />
-              </span>{" "}
-              on the left-most side of the archive you wish to export.
-            </li>
-            <li className="mb-2">
-              Before proceeding, verify that the archive ID matches the one you
-              want to export.
-            </li>
-            <li className="mb-2">
-              (Optional) Enter a custom file name for your export if desired.
-            </li>
-            <li className="mb-2">
-              Select your preferred file format for export, CSV or JSON.
-            </li>
-            <li className="mb-2">
-              Once you've selected your options, click{" "}
-              <span className="fw-semibold text-primary">Export</span>. Your
-              file should start downloading shortly. Please note that exporting
-              an archive may take longer than usual as data is retrieved from
-              the local server.
-            </li>
-          </ol>
         </>
       )}
-      <nav>
-        <ul className="pagination justify-content-center m-0">
-          <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
-            <button
-              className="page-link"
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-            >
-              &laquo;
-            </button>
-          </li>
-          {[...Array(totalPages)].map((_, index) => (
-            <li
-              key={index}
-              className={`page-item ${page === index + 1 ? "active" : ""}`}
-            >
-              <button className="page-link" onClick={() => setPage(index + 1)}>
-                {index + 1}
-              </button>
-            </li>
-          ))}
-          <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
-            <button
-              className="page-link"
-              onClick={() => setPage(page + 1)}
-              disabled={page === totalPages}
-            >
-              &raquo;
-            </button>
-          </li>
-        </ul>
-      </nav>
     </div>
   );
 }

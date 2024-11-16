@@ -20,7 +20,6 @@ export type PortConfigurationType = {
   threshold: [number, number];
   timestamp: Date;
   unit: string;
-  formula: number;
 };
 
 export type HistoryType = {
@@ -37,14 +36,8 @@ export type ActuationTriggerType = {
 export default function SensorDetailPanel() {
   const navigate = useNavigate();
   // gets the props through outlet context
-  const {
-    portListLoading,
-    portList,
-    adcLoading,
-    adcFormula,
-    setPrompt,
-    admin,
-  } = useOutletContext<ContextType>();
+  const { portListLoading, portList, notifications, setPrompt, admin } =
+    useOutletContext<ContextType>();
 
   // gets the index value from the URL Search
   const location = useLocation();
@@ -65,7 +58,6 @@ export default function SensorDetailPanel() {
       threshold: [0, 0],
       timestamp: new Date(0),
       unit: "",
-      formula: -1,
     });
   // holds the current actuation state
   const [actuationTrigger, setActuationTrigger] =
@@ -77,7 +69,7 @@ export default function SensorDetailPanel() {
   // holds the current value
   const [current, setCurrent] = useState<number>(0);
   // holds the predicted value
-  const [predict, setPredict] = useState<number>(0);
+  const [predict, setPredict] = useState<number | null>(null);
   // holds history
   const [history, setHistory] = useState<HistoryType[]>([]);
   // actuation loading state
@@ -87,6 +79,8 @@ export default function SensorDetailPanel() {
     useState<boolean>(true);
   // history loading state
   const [retrievingHistory, isRetrievingHistory] = useState<boolean>(true);
+  // number of data points to be used by the lagrange function
+  const datapoints = 2;
 
   // gets the configuration values of the specified port
   useEffect(() => {
@@ -106,7 +100,6 @@ export default function SensorDetailPanel() {
               ],
               timestamp: new Date(firebaseSnapshot.timestamp),
               unit: firebaseSnapshot.unit,
-              formula: firebaseSnapshot.formula,
             });
             isRetrievingConfiguration(false);
           }
@@ -135,13 +128,12 @@ export default function SensorDetailPanel() {
           const newHistory: HistoryType[] = days
             .flatMap((records: any, index) => {
               const recordsInArray = Object.values(records);
-              let currentDate = new Date(date[index]);
+              const currentDate: Date = new Date(date[index]);
               return recordsInArray.map((record: any) => {
                 const newRecord: HistoryType = {
                   data: record.data,
-                  timestamp: currentDate,
+                  timestamp: new Date(currentDate.getTime() + record.offset),
                 };
-                currentDate = new Date(currentDate.getTime() + record.offset);
                 return newRecord;
               });
             })
@@ -158,7 +150,6 @@ export default function SensorDetailPanel() {
         );
       }
     });
-
     return () => unsubscribe();
   }, [retrievingConfiguration]);
 
@@ -184,30 +175,45 @@ export default function SensorDetailPanel() {
   // sets the notification at firebase in the event of predicted value exceeding the threshold
   useEffect(() => {
     if (retrievingHistory) return;
+    if (predict !== null && !isNaN(predict)) {
+      if (
+        portConfiguration.threshold[0] <= predict &&
+        predict <= portConfiguration.threshold[1]
+      )
+        return;
 
-    if (
-      portConfiguration.threshold[0] <= predict &&
-      predict <= portConfiguration.threshold[1]
-    )
-      return;
+      const now = new Date();
+      const past30mins = new Date(now.getTime() - 1800000);
+      if (
+        notifications.some(
+          (notification) =>
+            notification.text ===
+              `The predicted value of Channel ${portIndex} in the next 30 minutes is expected to exceed the threshold. Would you like to initiate actuation now?` &&
+            new Date(notification.timestamp) >= past30mins &&
+            new Date(notification.timestamp) <= now
+        )
+      ) {
+        return;
+      }
 
-    try {
-      const num = Math.floor(Math.random() * 100);
-      update(ref(db, `Notifications`), {
-        [num]: {
-          port: portIndex,
-          timestamp: new Date()
-            .toLocaleString("en-US", {
-              dateStyle: "short",
-              timeStyle: "medium",
-            })
-            .replace(/\//g, "-"),
-          type: 5,
-          viewed: "F",
-        },
-      });
-    } catch (error) {
-      console.error(error);
+      try {
+        const num = Math.floor(Math.random() * 100);
+        update(ref(db, `Notifications`), {
+          [num]: {
+            port: portIndex,
+            timestamp: new Date()
+              .toLocaleString("en-US", {
+                dateStyle: "short",
+                timeStyle: "medium",
+              })
+              .replace(/\//g, "-"),
+            type: 5,
+            viewed: "F",
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
   }, [predict, portConfiguration.threshold]);
 
@@ -246,7 +252,10 @@ export default function SensorDetailPanel() {
         admin={admin}
       />
       {/* Sensor Details Panel */}
-      <div className="d-flex flex-column flex-grow-1 pb-3 px-4 ">
+      <div
+        className="d-flex flex-column flex-grow-1 pb-3 px-4"
+        style={{ width: "400px" }}
+      >
         <div className="d-flex justify-content-between mt-4">
           <h4>{portConfiguration.define} Details</h4>
           <div className="d-flex flex-wrap justify-content-end gap-2">
@@ -261,13 +270,11 @@ export default function SensorDetailPanel() {
               portIndex={portIndex}
               portName={portList[portIndex].name}
               portConfiguration={portConfiguration}
-              adcFormula={adcFormula}
               setPrompt={setPrompt}
               disable={
                 actuationTrigger.actuate ||
                 retrievingConfiguration ||
-                portListLoading ||
-                adcLoading
+                portListLoading
               }
               admin={admin}
             />
@@ -313,6 +320,7 @@ export default function SensorDetailPanel() {
                   current={current}
                   unit={portConfiguration.unit}
                   history={history}
+                  datapoints={datapoints}
                   predict={predict}
                   setPredict={setPredict}
                 />

@@ -95,7 +95,7 @@ export default function ContactUs({ setPrompt }: ContactUsProps) {
             </div>
             <div className="d-flex justify-content-end my-3">
               <button className="btn btn-primary w-25" type="submit">
-                Send Message
+                Send <span className="d-none d-md-inline"> Message</span>
               </button>
             </div>
           </form>

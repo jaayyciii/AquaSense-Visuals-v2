@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { ref, set } from "firebase/database";
 import { db } from "../FirebaseConfig.ts";
 import { Toast } from "bootstrap";
+import notification from "../assets/notification.mp3";
 import type { NotificationsType } from "../home/HomeLayout";
 
 // component props
@@ -18,6 +19,7 @@ export default function Notify({
   prompt,
 }: NotifyProps) {
   const navigate = useNavigate();
+  const audio = new Audio(notification);
 
   // display notifications toasts
   useEffect(() => {
@@ -25,6 +27,7 @@ export default function Notify({
     notificationToasts.forEach((notificationToast) => {
       const toastInstance = Toast.getOrCreateInstance(notificationToast);
       toastInstance.show();
+      audio.play();
     });
   }, [notifications]);
 

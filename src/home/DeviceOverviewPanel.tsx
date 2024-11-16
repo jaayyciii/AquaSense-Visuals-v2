@@ -6,26 +6,21 @@ import type { ContextType } from "./HomeLayout";
 
 export default function DeviceOverviewPanel() {
   // gets the props through outlet context
-  const {
-    portListLoading,
-    portList,
-    adcLoading,
-    adcFormula,
-    setPrompt,
-    admin,
-  } = useOutletContext<ContextType>();
+  const { portListLoading, portList, setPrompt, admin } =
+    useOutletContext<ContextType>();
 
   return (
     <>
-      <div className="d-flex flex-column flex-grow-1 pb-3 px-4">
+      <div
+        className="d-flex flex-column flex-grow-1 pb-3 px-4"
+        style={{ width: "400px" }}
+      >
         <div className="d-flex justify-content-between mt-4">
           <h4>Device Overview</h4>
           <DOConfigurationButton
-            portListLoading={portListLoading}
             portList={portList}
-            adcLoading={adcLoading}
-            adcFormula={adcFormula}
             setPrompt={setPrompt}
+            disable={portListLoading}
             admin={admin}
           />
         </div>
@@ -42,7 +37,7 @@ export default function DeviceOverviewPanel() {
         className="d-flex flex-column pe-4 d-none d-xl-flex"
         style={{ minWidth: "355px" }}
       >
-        <div className="mt-4 border">
+        <div className="mt-4">
           <Calendar />
         </div>
       </div>
