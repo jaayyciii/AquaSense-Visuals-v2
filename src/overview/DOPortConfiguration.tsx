@@ -73,31 +73,28 @@ export default function DOPortConfiguration({
 
   // updates the threshold values according to the actuation mode
   function updateActuationValues() {
+    const maxThreshold = 340282346638528859811704183484516925440.0;
+    const minThreshold = -340282346638528859811704183484516925440.0;
+
+    let thresholds: [number, number];
     switch (actuationMode) {
       case 2:
-        setConfiguration({
-          ...configuration,
-          threshold: [configuration.threshold[0], configuration.range[1]],
-        });
+        thresholds = [configuration.threshold[0], maxThreshold];
         break;
       case 3:
-        setConfiguration({
-          ...configuration,
-          threshold: [configuration.range[0], configuration.threshold[1]],
-        });
+        thresholds = [minThreshold, configuration.threshold[1]];
         break;
       case 4:
-        setConfiguration({
-          ...configuration,
-          threshold: [
-            -340282346638528859811704183484516925440.0,
-            340282346638528859811704183484516925440.0,
-          ],
-        });
+        thresholds = [minThreshold, maxThreshold];
         break;
       default:
-        break;
+        return;
     }
+
+    setConfiguration({
+      ...configuration,
+      threshold: thresholds,
+    });
   }
 
   // checks whether the user inputs are valid, if so, it proceeds to confirmation page
@@ -130,25 +127,34 @@ export default function DOPortConfiguration({
     if (actuationMode === 0) {
       setActuationError("Please select the mode of actuation for your sensor");
       return;
-    } else {
-      updateActuationValues();
-      if (actuationMode !== 4) {
-        if (
-          configuration.threshold[0] < configuration.range[0] ||
-          configuration.threshold[1] > configuration.range[1]
-        ) {
-          setActuationError(
-            `Threshold values must be within the sensor's range: ${configuration.range[0]} - ${configuration.range[1]}`
-          );
-          return;
-        }
-      }
-      if (configuration.threshold[0] > configuration.threshold[1]) {
-        setActuationError(
-          "The minimum threshold value cannot exceed the maximum threshold."
-        );
-        return;
-      }
+    }
+
+    updateActuationValues();
+
+    if (
+      (actuationMode === 2 &&
+        configuration.threshold[0] < configuration.range[0]) ||
+      configuration.threshold[0] > configuration.range[1] ||
+      (actuationMode === 3 &&
+        configuration.threshold[1] > configuration.range[1]) ||
+      configuration.threshold[1] < configuration.range[0] ||
+      (actuationMode !== 4 &&
+        actuationMode !== 2 &&
+        actuationMode !== 3 &&
+        (configuration.threshold[0] < configuration.range[0] ||
+          configuration.threshold[1] > configuration.range[1]))
+    ) {
+      setActuationError(
+        `Threshold values must be within the sensor's range: ${configuration.range[0]} - ${configuration.range[1]}.`
+      );
+      return;
+    }
+
+    if (configuration.threshold[0] > configuration.threshold[1]) {
+      setActuationError(
+        "The minimum threshold value cannot exceed the maximum threshold."
+      );
+      return;
     }
 
     setTimeout(() => {

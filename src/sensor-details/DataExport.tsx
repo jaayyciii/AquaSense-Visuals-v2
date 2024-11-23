@@ -58,7 +58,7 @@ export default function DataExport({
       portConfiguration.threshold[1],
     ];
     const configCSV = [type, timestamp, range, threshold].join("\n");
-    const headers = ["Timestamp", "Data", "Unit"];
+    const headers = ["Timestamp (UTC)", "Data", "Unit"];
     const rows = exportHistory
       .map((record) => [
         record.timestamp.toISOString(),

@@ -51,31 +51,28 @@ export default function SDPortConfiguration({
 
   // updates the threshold values according to the actuation mode
   function updateActuationValues() {
+    const maxThreshold = 340282346638528859811704183484516925440.0;
+    const minThreshold = -340282346638528859811704183484516925440.0;
+
+    let thresholds: [number, number];
     switch (newActuationMode) {
       case 2:
-        setNewConfiguration({
-          ...newConfiguration,
-          threshold: [newConfiguration.threshold[0], newConfiguration.range[1]],
-        });
+        thresholds = [newConfiguration.threshold[0], maxThreshold];
         break;
       case 3:
-        setNewConfiguration({
-          ...newConfiguration,
-          threshold: [newConfiguration.range[0], newConfiguration.threshold[1]],
-        });
+        thresholds = [minThreshold, newConfiguration.threshold[1]];
         break;
       case 4:
-        setNewConfiguration({
-          ...newConfiguration,
-          threshold: [
-            -340282346638528859811704183484516925440.0,
-            340282346638528859811704183484516925440.0,
-          ],
-        });
+        thresholds = [minThreshold, maxThreshold];
         break;
       default:
-        break;
+        return;
     }
+
+    setNewConfiguration({
+      ...newConfiguration,
+      threshold: thresholds,
+    });
   }
 
   // checks whether the user inputs are valid, if so, it proceeds to confirmation page
@@ -85,12 +82,12 @@ export default function SDPortConfiguration({
     setRangeError("");
     setActuationError("");
 
-    if (newConfiguration.define === "") {
-      setDefineError("Please specify the sensor type for this channel");
+    if (!newConfiguration.define) {
+      setDefineError("Please specify the sensor type for this channel.");
       return;
     }
 
-    if (newConfiguration.unit === "") {
+    if (!newConfiguration.unit) {
       setUnitError("Please enter the SI unit for the sensor readings.");
       return;
     }
@@ -101,27 +98,36 @@ export default function SDPortConfiguration({
     }
 
     if (newActuationMode === 0) {
-      setActuationError("Please select the mode of actuation for your sensor");
+      setActuationError("Please select the mode of actuation for your sensor.");
       return;
-    } else {
-      updateActuationValues();
-      if (newActuationMode !== 4) {
-        if (
-          newConfiguration.threshold[0] < newConfiguration.range[0] ||
-          newConfiguration.threshold[1] > newConfiguration.range[1]
-        ) {
-          setActuationError(
-            `Threshold values must be within the sensor's range: ${newConfiguration.range[0]} - ${newConfiguration.range[1]}`
-          );
-          return;
-        }
-      }
-      if (newConfiguration.threshold[0] > newConfiguration.threshold[1]) {
-        setActuationError(
-          "The minimum threshold value cannot exceed the maximum threshold."
-        );
-        return;
-      }
+    }
+
+    updateActuationValues();
+
+    if (
+      (newActuationMode === 2 &&
+        newConfiguration.threshold[0] < newConfiguration.range[0]) ||
+      newConfiguration.threshold[0] > newConfiguration.range[1] ||
+      (newActuationMode === 3 &&
+        newConfiguration.threshold[1] > newConfiguration.range[1]) ||
+      newConfiguration.threshold[1] < newConfiguration.range[0] ||
+      (newActuationMode !== 4 &&
+        newActuationMode !== 2 &&
+        newActuationMode !== 3 &&
+        (newConfiguration.threshold[0] < newConfiguration.range[0] ||
+          newConfiguration.threshold[1] > newConfiguration.range[1]))
+    ) {
+      setActuationError(
+        `Threshold values must be within the sensor's range: ${newConfiguration.range[0]} - ${newConfiguration.range[1]}.`
+      );
+      return;
+    }
+
+    if (newConfiguration.threshold[0] > newConfiguration.threshold[1]) {
+      setActuationError(
+        "The minimum threshold value cannot exceed the maximum threshold."
+      );
+      return;
     }
 
     setTimeout(() => {
